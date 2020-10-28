@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 renoweb.code-workspace
+.DS_Store
