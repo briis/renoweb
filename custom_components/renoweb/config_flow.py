@@ -4,13 +4,14 @@ import logging
 import voluptuous as vol
 
 from pyrenoweb import (
-    RenoeWeb,
+    RenoWeb,
     RequestError,
     ResultError,
     InvalidApiKey,
 )
-from homeassistant import config_entries, core
+from homeassistant import config_entries
 from homeassistant.core import callback
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .const import (
     API_KEY_MUNICIPALITIES,
@@ -28,21 +29,6 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def validate_input(hass: core.HomeAssistant, data):
-    """Validate the user input allows us to connect.
-    Data has the keys from DATA_SCHEMA with values provided by the user.
-    """
-    renoweb = RenoeWeb(API_KEY_MUNICIPALITIES, API_KEY)
-
-    try:
-        unique_data = await renoweb.find_renoweb_ids(
-            data[CONF_MUNICIPALITY], data[CONF_ROAD_NAME], data[CONF_HOUSE_NUMBER]
-        )
-        return unique_data
-    except ResultError as error:
-        return error
-
-
 class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """RenoWeb configuration flow."""
 
@@ -58,31 +44,51 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
         errors = {}
-        info = None
 
-        if user_input is not None:
-            await self.async_set_unique_id(f"{user_input[CONF_ADDRESS_ID]}")
-            self._abort_if_unique_id_configured()
-            try:
-                info = await validate_input(self.hass, user_input)
-            except ResultError:
-                errors = {"base": "connection_error"}
+        if user_input is None:
+            return await self._show_setup_form()
 
-            if "base" not in errors and info is not None:
-                address = info.get("address")
-                address_id = info.get("id")
-                municipality_id = info.get("municipality_id")
-                return self.async_create_entry(
-                    title=address,
-                    data={
-                        CONF_ADDRESS_ID: address_id,
-                        CONF_MUNICIPALITY_ID: municipality_id,
-                        CONF_MUNICIPALITY: user_input[CONF_MUNICIPALITY],
-                        CONF_ROAD_NAME: user_input.get(CONF_ROAD_NAME),
-                        CONF_HOUSE_NUMBER: user_input.get(CONF_HOUSE_NUMBER),
-                        CONF_UPDATE_INTERVAL: user_input.get(CONF_UPDATE_INTERVAL),
-                    },
-                )
+        session = async_create_clientsession(self.hass)
+        renoweb = RenoWeb(API_KEY_MUNICIPALITIES, API_KEY, session)
+
+        try:
+            unique_data = await renoweb.find_renoweb_ids(
+                user_input[CONF_MUNICIPALITY],
+                user_input[CONF_ROAD_NAME],
+                user_input[CONF_HOUSE_NUMBER],
+            )
+        except ResultError:
+            errors["base"] = "location_not_found"
+            return await self._show_setup_form(errors)
+        except InvalidApiKey:
+            errors["base"] = "connection_error"
+            return await self._show_setup_form(errors)
+        except RequestError:
+            errors["base"] = "request_error"
+            return await self._show_setup_form(errors)
+
+        address = unique_data.get("address")
+        address_id = unique_data.get("id")
+        municipality_id = unique_data.get("municipality_id")
+        entries = self._async_current_entries()
+        for entry in entries:
+            if entry.data[CONF_ADDRESS_ID] == address_id:
+                return self.async_abort(reason="name_exists")
+
+        return self.async_create_entry(
+            title=address,
+            data={
+                CONF_ADDRESS_ID: address_id,
+                CONF_MUNICIPALITY_ID: municipality_id,
+                CONF_MUNICIPALITY: user_input[CONF_MUNICIPALITY],
+                CONF_ROAD_NAME: user_input.get(CONF_ROAD_NAME),
+                CONF_HOUSE_NUMBER: user_input.get(CONF_HOUSE_NUMBER),
+                CONF_UPDATE_INTERVAL: user_input.get(CONF_UPDATE_INTERVAL),
+            },
+        )
+
+    async def _show_setup_form(self, errors=None):
+        """Show the setup form to the user."""
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -95,7 +101,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ): vol.All(vol.Coerce(int), vol.Range(min=3, max=24)),
                 }
             ),
-            errors=errors,
+            errors=errors or {},
         )
 
 

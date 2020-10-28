@@ -2,6 +2,8 @@
     "config": {
         "error": {
             "name_exists": "Address already setup. Choose another address.",
+            "location_not_found": "The location you entered is not found",
+            "request_error": "Error retrieving data from the Endpoint",
             "connection_error": "Could not connect to RenoWeb."
         },
         "step": {
