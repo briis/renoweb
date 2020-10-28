@@ -1,0 +1,32 @@
+{
+    "config": {
+        "error": {
+            "name_exists": "Address already setup. Choose another address.",
+            "connection_error": "Could not connect to RenoWeb."
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "municipality": "Municipality",
+                    "road_name": "Road name",
+                    "house_number": "House Number",
+                    "update_interval": "Update Interval (Hours)"
+                },
+                "description": "Setup Home Assistant to collect Pick-Up data from RenoWeb.",
+                "title": "RenoWeb Garbage Collection"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "municipality": "Municipality",
+                    "road_name": "Road name",
+                    "house_number": "House Number",
+                    "update_interval": "Update Interval (Hours)"
+                }
+            }
+        }
+    }
+}

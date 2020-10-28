@@ -1,0 +1,32 @@
+{
+    "config": {
+        "error": {
+            "name_exists": "Adressen er allerede sat op. Brug en anden adresse.",
+            "connection_error": "Kunne ikke forbinde til RenoWeb."
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "municipality": "Kommune",
+                    "road_name": "Vej navn",
+                    "house_number": "Hus nummer",
+                    "update_interval": "Opdaterings interval (timer)"
+                },
+                "description": "Hent data fra RenoWeb ind i Home Assistant.",
+                "title": "RenoWeb Afhalds afhentning"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "municipality": "Kommune",
+                    "road_name": "Vej navn",
+                    "house_number": "Hus nummer",
+                    "update_interval": "Opdaterings interval (timer)"
+                }
+            }
+        }
+    }
+}
