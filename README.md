@@ -1,4 +1,5 @@
 # // renoweb
+
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/briis/renoweb?include_prereleases&style=flat-square)
 
 The renoweb integration adds support for collecting Garbage Collection data from RenoWeb. This is a data provider for several Municipalities in Denmark.
@@ -7,11 +8,17 @@ There is currently support for the following device types within Home Assistant:
 
 * Sensor
 
-
 ## Installation
 
 ### HACS Installation
-This Integration is not part of the default HACS store, but you can add it as a Custom repository in HACS by doing the following.
+
+This Integration is not part of the default HACS store, but you can add it as a Custom repository in HACS by doing the following:
+
+1. Go to HACS in your HA installation, and click on *Integrations*
+2. Click the three vertical dots in the upper right corner, and select *Custom repositories*
+3. Add `https://github.com/briis/renoweb` and select *Integration* as Category, and then click *Add*
+
+You should now be able to find this Integration in HACS. (Most times you need to do a Hard Refresh of the browser before it shows up)
 
 ### Manual Installation
 
