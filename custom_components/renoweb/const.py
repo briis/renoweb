@@ -1,0 +1,14 @@
+"""Constants in renoweb component."""
+
+API_KEY_MUNICIPALITIES = "DDDD4A1D-DDD1-4436-DDDD-3F374DD683A1"
+API_KEY = "346B43B0-D1F0-4AFC-9EE8-C4AD1BFDC218"
+
+CONF_ADDRESS_ID = "address_id"
+CONF_HOUSE_NUMBER = "house_number"
+CONF_MUNICIPALITY = "municipality"
+CONF_MUNICIPALITY_ID = "municipality_id"
+CONF_ROAD_NAME = "road_name"
+CONF_UPDATE_INTERVAL = "update_interval"
+
+DEFAULT_SCAN_INTERVAL = 6
+DOMAIN = "renoweb"
