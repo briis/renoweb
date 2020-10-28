@@ -1,0 +1,13 @@
+{
+    "domain": "renoweb",
+    "name": "RenoWeb Garbage Collection",
+    "config_flow": true,
+    "documentation": "https://github.com/briis/renoweb",
+    "issue_tracker": "https://github.com/briis/renoweb/issues",
+    "requirements": [
+        "pyrenoweb==0.1.2"
+    ],
+    "codeowners": [
+        "@briis"
+    ]
+}
