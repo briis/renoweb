@@ -16,6 +16,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from .const import (
     API_KEY_MUNICIPALITIES,
     API_KEY,
+    CONF_ADDRESS,
     CONF_ADDRESS_ID,
     CONF_HOUSE_NUMBER,
     CONF_MUNICIPALITY,
@@ -78,6 +79,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_create_entry(
             title=address,
             data={
+                CONF_ADDRESS: address,
                 CONF_ADDRESS_ID: address_id,
                 CONF_MUNICIPALITY_ID: municipality_id,
                 CONF_MUNICIPALITY: user_input[CONF_MUNICIPALITY],
