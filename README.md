@@ -37,3 +37,7 @@ const.py
 string.json
 translation (Directory with all files)
 ```
+
+## Credits
+
+This module is solely based on the work done by **@esbenr** and **@AngelFreak**, who did all the work in sniffing out the API and Keys.
