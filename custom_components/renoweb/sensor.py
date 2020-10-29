@@ -7,7 +7,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
 import homeassistant.helpers.device_registry as dr
 from homeassistant.const import ATTR_ATTRIBUTION
-from pyrenoweb import TYPE_METAL_GLASS, TYPE_PAPER, TYPE_RESIDUAL
+from pyrenoweb import (
+    TYPE_METAL_GLASS,
+    TYPE_PAPER,
+    TYPE_RESIDUAL,
+    TYPE_PLASTIC,
+    TYPE_STORSKRALD,
+    TYPE_HAVEAFFALD,
+)
 from .const import (
     ATTR_DESCRIPTION,
     ATTR_NEXT_PICKUP_TEXT,
@@ -74,12 +81,14 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def icon(self):
         """Icon to use in the frontend."""
-        if self.entity_object == TYPE_RESIDUAL:
+        if self.entity_object in TYPE_RESIDUAL:
             return f"mdi:delete"
-        elif self.entity_object == TYPE_PAPER:
+        elif self.entity_object in TYPE_PAPER:
             return f"mdi:file"
-        elif self.entity_object == TYPE_METAL_GLASS:
+        elif self.entity_object in TYPE_METAL_GLASS:
             return f"mdi:cup"
+        elif self.entity_object in TYPE_HAVEAFFALD:
+            return "mdi:tree"
         else:
             return f"mdi:delete"
 
