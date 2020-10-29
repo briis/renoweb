@@ -8,6 +8,7 @@ There is currently support for the following device types within Home Assistant:
 
 * Sensor
 
+The *state* of the sensor, will be number of days until next pick-up
 
 ## CREDITS
 
