@@ -7,6 +7,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
 import homeassistant.helpers.device_registry as dr
 from homeassistant.const import ATTR_ATTRIBUTION
+from pyrenoweb import TYPE_METAL_GLASS, TYPE_PAPER, TYPE_RESIDUAL
 from .const import (
     ATTR_DESCRIPTION,
     ATTR_NEXT_PICKUP_TEXT,
@@ -14,7 +15,7 @@ from .const import (
     ATTR_SCHEDULE,
     DEFAULT_ATTRIBUTION,
     DOMAIN,
-    SENSOR_TYPES,
+    UNIT_SENSOR,
 )
 from .entity import RenoWebEntity
 
@@ -43,7 +44,7 @@ async def async_setup_entry(
         return
 
     sensors = []
-    for sensor in SENSOR_TYPES:
+    for sensor in coordinator.data:
         sensors.append(
             RenoWebSensor(coordinator, renoweb, sensor, municipality_id, address_id)
         )
@@ -59,13 +60,6 @@ class RenoWebSensor(RenoWebEntity, Entity):
     def __init__(self, coordinator, renoweb, sensor, municipality_id, address_id):
         """Initialize the sensor."""
         super().__init__(coordinator, renoweb, sensor, municipality_id, address_id)
-        self._state = None
-        self._name = f"{DOMAIN.capitalize()} {SENSOR_TYPES[self.entity_object][0].replace(' ', '_')}"
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
 
     @property
     def state(self):
@@ -75,12 +69,19 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return SENSOR_TYPES[self.entity_object][2]
+        return UNIT_SENSOR
 
     @property
     def icon(self):
         """Icon to use in the frontend."""
-        return f"mdi:{SENSOR_TYPES[self.entity_object][1]}"
+        if self.entity_object == TYPE_RESIDUAL:
+            return f"mdi:delete"
+        elif self.entity_object == TYPE_PAPER:
+            return f"mdi:file"
+        elif self.entity_object == TYPE_METAL_GLASS:
+            return f"mdi:cup"
+        else:
+            return f"mdi:delete"
 
     @property
     def device_state_attributes(self):

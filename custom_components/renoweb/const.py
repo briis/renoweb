@@ -24,8 +24,4 @@ DOMAIN = "renoweb"
 
 INTEGRATION_PLATFORMS = ["sensor"]
 
-SENSOR_TYPES = {
-    "Restaffald-Madaffald": ["Restaffald og Mad", "delete", "days"],
-    "Metal-Glas": ["Metal og Glas", "cup-off", "days"],
-    "Papir og karton": ["Papir og karton", "file", "days"],
-}
+UNIT_SENSOR = "days"

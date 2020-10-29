@@ -22,6 +22,13 @@ class RenoWebEntity(Entity):
         self._unique_id = f"{self.entity_object.replace(' ', '_')}_{self._address_id}"
 
     @property
+    def name(self):
+        """Return the name of the sensor."""
+        name = self.entity_object.replace("-", " ")
+        name = name.replace("_", " ")
+        return f"{DOMAIN.capitalize()} {name}"
+
+    @property
     def should_poll(self):
         """Poll entity to update attributes."""
         return False
