@@ -8,6 +8,7 @@ from pyrenoweb import (
     RequestError,
     ResultError,
     InvalidApiKey,
+    MunicipalityError,
 )
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -69,7 +70,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return await self._show_setup_form(errors)
 
         address = unique_data.get("address")
-        address_id = unique_data.get("id")
+        address_id = unique_data.get("address_id")
         municipality_id = unique_data.get("municipality_id")
         entries = self._async_current_entries()
         for entry in entries:

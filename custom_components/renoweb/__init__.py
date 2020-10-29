@@ -5,7 +5,13 @@ import logging
 from datetime import timedelta
 
 from aiohttp.client_exceptions import ServerDisconnectedError
-from pyrenoweb import RenoWeb, InvalidApiKey, RequestError, ResultError
+from pyrenoweb import (
+    RenoWebData,
+    InvalidApiKey,
+    RequestError,
+    ResultError,
+    MunicipalityError,
+)
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -56,7 +62,12 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         )
 
     session = async_get_clientsession(hass)
-    renoweb = RenoWeb(API_KEY_MUNICIPALITIES, API_KEY, session)
+    renoweb = RenoWebData(
+        API_KEY,
+        entry.data.get(CONF_MUNICIPALITY_ID),
+        entry.data.get(CONF_ADDRESS_ID),
+        session,
+    )
     _LOGGER.debug("Connected to RenoWeb Platform")
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
@@ -72,7 +83,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     )
 
     try:
-        await renoweb.get_municipalities()
+        await renoweb.get_pickup_data()
     except InvalidApiKey:
         _LOGGER.error(
             "Could not Authorize against Weatherflow Server. Please reinstall integration."
