@@ -40,4 +40,4 @@ translation (Directory with all files)
 
 ## Credits
 
-This module is solely based on the work done by **@esbenr** and **@AngelFreak**, who did all the work in sniffing out the API and Keys.
+This module is solely based on the work done by **Jacob Henriksen**, **@esbenr** and **@AngelFreak**, who did all the work in sniffing out the API and Keys. I took their work and just converted it in to a Home Assistant Integration.
