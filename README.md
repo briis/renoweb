@@ -46,7 +46,7 @@ translation (Directory with all files)
 ## SUPPORTED MUNICIPALITIES
 As of October 2020, this is the list of supported Municipalities:
 
-````
+```txt
 MUNICIPALITY LIST
 **************************
 Allerød - ID: 201
