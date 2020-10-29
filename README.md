@@ -8,7 +8,12 @@ There is currently support for the following device types within Home Assistant:
 
 * Sensor
 
-## Installation
+
+## CREDITS
+
+This module is solely based on the work done by **Jacob Henriksen**, **@esbenr** and **@AngelFreak**, who did all the work in sniffing out the API and Keys. I took their work and just converted it in to a Home Assistant Integration.
+
+## INSTALLATION
 
 ### HACS Installation
 
@@ -38,6 +43,39 @@ string.json
 translation (Directory with all files)
 ```
 
-## Credits
+## SUPPORTED MUNICIPALITIES
+As of October 2020, this is the list of supported Municipalities:
 
-This module is solely based on the work done by **Jacob Henriksen**, **@esbenr** and **@AngelFreak**, who did all the work in sniffing out the API and Keys. I took their work and just converted it in to a Home Assistant Integration.
+````
+MUNICIPALITY LIST
+**************************
+Allerød - ID: 201
+Brøndby - ID: 153
+Dragør - ID: 155
+Egedal - ID: 240
+Esbjerg - ID: 561
+Fredensborg - ID: 210
+Frederikssund - ID: 250
+Gentofte - ID: 157
+Gladsaxe - ID: 159
+Glostrup - ID: 161
+Greve - ID: 253
+Helsingør - ID: 217
+Herlev - ID: 163
+Hillerød - ID: 219
+Hvidovre - ID: 167
+Høje-Taastrup - ID: 169
+Køge - ID: 259
+Lejre - ID: 350
+Rebild - ID: 840
+Ringkøbing-Skjern - ID: 760
+Roskilde - ID: 265
+Rudersdal - ID: 230
+Solrød - ID: 269
+Stevns - ID: 336
+Svendborg - ID: 479
+Sweco Demo - ID: 10210
+Tårnby - ID: 185
+Vejen - ID: 575
+Aalborg - ID: 851
+````
