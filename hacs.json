@@ -1,5 +1,5 @@
 {
-    "name": "RenoWeb Garbage Collection for Home Assistant",
+    "name": "RenoWeb Garbage Collection",
     "content_in_root": false,
     "render_readme": true,
     "domains": [
