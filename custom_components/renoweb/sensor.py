@@ -1,11 +1,11 @@
 """Sensors for the RenoWeb Garbage Collection Service."""
 
 import logging
-import datetime
+from datetime import datetime
 from homeassistant.helpers.entity import Entity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
-import homeassistant.helpers.device_registry as dr
+import homeassistant.util.dt as dt
 from homeassistant.const import ATTR_ATTRIBUTION
 from pyrenoweb import (
     TYPE_METAL_GLASS,
@@ -103,12 +103,12 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes of the device."""
-        now = datetime.datetime.now()
+        local_dt = dt.as_local(datetime.now())
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
             ATTR_DESCRIPTION: self.data.get("description"),
             ATTR_NEXT_PICKUP_TEXT: self.data.get("nextpickupdatetext"),
             ATTR_NEXT_PICKUP_DATE: self.data.get("nextpickupdate"),
-            ATTR_REFRESH_TIME: now.strftime("%d-%m-%Y %H:%M"),
+            ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
             ATTR_SCHEDULE: self.data.get("schedule"),
         }
