@@ -4,6 +4,7 @@
             "name_exists": "Address already setup. Choose another address.",
             "location_not_found": "The location you entered is not found",
             "request_error": "Error retrieving data from the Endpoint",
+            "municipality_not_supported": "The Municipality is not supported by this Integration",
             "connection_error": "Could not connect to RenoWeb."
         },
         "step": {

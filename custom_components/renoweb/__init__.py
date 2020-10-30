@@ -10,7 +10,6 @@ from pyrenoweb import (
     InvalidApiKey,
     RequestError,
     ResultError,
-    MunicipalityError,
 )
 
 from homeassistant.config_entries import ConfigEntry
@@ -26,7 +25,6 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
-    API_KEY_MUNICIPALITIES,
     API_KEY,
     CONF_ADDRESS,
     CONF_ADDRESS_ID,

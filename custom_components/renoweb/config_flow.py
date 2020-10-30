@@ -59,6 +59,9 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 user_input[CONF_ROAD_NAME],
                 user_input[CONF_HOUSE_NUMBER],
             )
+        except MunicipalityError:
+            errors["base"] = "municipality_not_supported"
+            return await self._show_setup_form(errors)
         except ResultError:
             errors["base"] = "location_not_found"
             return await self._show_setup_form(errors)

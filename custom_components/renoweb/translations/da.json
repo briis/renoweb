@@ -4,6 +4,7 @@
             "name_exists": "Adressen er allerede sat op. Brug en anden adresse.",
             "request_error": "Fejl ved hentning af data fra serveren.",
             "location_not_found": "Den angivne adresse blev ikke fundet.",
+            "municipality_not_supported": "Kommunen er ikke understøttet i denne Integration",
             "connection_error": "Kunne ikke forbinde til RenoWeb."
         },
         "step": {

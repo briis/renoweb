@@ -1,7 +1,7 @@
 """Sensors for the RenoWeb Garbage Collection Service."""
 
 import logging
-
+import datetime
 from homeassistant.helpers.entity import Entity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
@@ -14,11 +14,13 @@ from pyrenoweb import (
     TYPE_PLASTIC,
     TYPE_STORSKRALD,
     TYPE_HAVEAFFALD,
+    TYPE_GLASS,
 )
 from .const import (
     ATTR_DESCRIPTION,
     ATTR_NEXT_PICKUP_TEXT,
     ATTR_NEXT_PICKUP_DATE,
+    ATTR_REFRESH_TIME,
     ATTR_SCHEDULE,
     DEFAULT_ATTRIBUTION,
     DOMAIN,
@@ -86,19 +88,27 @@ class RenoWebSensor(RenoWebEntity, Entity):
         elif self.entity_object in TYPE_PAPER:
             return f"mdi:file"
         elif self.entity_object in TYPE_METAL_GLASS:
-            return f"mdi:cup"
+            return f"mdi:bottle-wine"
+        elif self.entity_object in TYPE_GLASS:
+            return f"mdi:bottle-wine"
         elif self.entity_object in TYPE_HAVEAFFALD:
             return "mdi:tree"
+        elif self.entity_object in TYPE_PLASTIC:
+            return "mdi:cup"
+        elif self.entity_object in TYPE_STORSKRALD:
+            return "mdi:truck"
         else:
             return f"mdi:delete"
 
     @property
     def device_state_attributes(self):
         """Return the state attributes of the device."""
+        now = datetime.datetime.now()
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
             ATTR_DESCRIPTION: self.data.get("description"),
             ATTR_NEXT_PICKUP_TEXT: self.data.get("nextpickupdatetext"),
             ATTR_NEXT_PICKUP_DATE: self.data.get("nextpickupdate"),
+            ATTR_REFRESH_TIME: now.strftime("%d-%m-%Y %H:%M"),
             ATTR_SCHEDULE: self.data.get("schedule"),
         }
