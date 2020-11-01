@@ -70,21 +70,14 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
 
-    # coordinator = DataUpdateCoordinator(
-    #     hass,
-    #     _LOGGER,
-    #     name=DOMAIN,
-    #     update_method=renoweb.get_pickup_data,
-    #     update_interval=timedelta(
-    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-    #     ),
-    # )
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
         name=DOMAIN,
         update_method=renoweb.get_pickup_data,
-        update_interval=timedelta(minutes=2),
+        update_interval=timedelta(
+            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        ),
     )
 
     try:
