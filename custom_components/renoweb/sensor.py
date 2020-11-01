@@ -18,7 +18,7 @@ from pyrenoweb import (
 )
 from .const import (
     ATTR_DESCRIPTION,
-    ATTR_FORMATTED_STATE,
+    ATTR_FORMATTED_STATE_DK,
     ATTR_NEXT_PICKUP_TEXT,
     ATTR_NEXT_PICKUP_DATE,
     ATTR_REFRESH_TIME,
@@ -118,5 +118,5 @@ class RenoWebSensor(RenoWebEntity, Entity):
             ATTR_NEXT_PICKUP_DATE: self._data.get("nextpickupdate"),
             ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
             ATTR_SCHEDULE: self._data.get("schedule"),
-            ATTR_FORMATTED_STATE: format_state,
+            ATTR_FORMATTED_STATE_DK: format_state,
         }
