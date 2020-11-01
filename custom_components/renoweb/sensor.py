@@ -108,9 +108,14 @@ class RenoWebSensor(RenoWebEntity, Entity):
         pickup_dt = datetime.fromtimestamp(
             int(self._data.get("nextpickupdatetimestamp"))
         )
-        format_dt = pickup_dt.strftime("%a d. %d/%m")
+        day_number = pickup_dt.weekday()
+        day_list = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
+        day_name = day_list[day_number]
+        format_dt = pickup_dt.strftime(" d. %d/%m")
         day_str = "dag" if self.state == 1 else "dage"
-        format_state = str(self.state) + " " + day_str + " (" + format_dt + ")"
+        format_state = (
+            str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
+        )
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
             ATTR_DESCRIPTION: self._data.get("description"),
