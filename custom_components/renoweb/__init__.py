@@ -14,7 +14,7 @@ from pyrenoweb import (
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers import aiohttp_client
 import homeassistant.helpers.device_registry as dr
 from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 from homeassistant.helpers.dispatcher import (
@@ -59,7 +59,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
             },
         )
 
-    session = async_get_clientsession(hass)
+    session = aiohttp_client.async_get_clientsession(hass)
     renoweb = RenoWebData(
         API_KEY,
         entry.data.get(CONF_MUNICIPALITY_ID),
@@ -70,14 +70,21 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
 
+    # coordinator = DataUpdateCoordinator(
+    #     hass,
+    #     _LOGGER,
+    #     name=DOMAIN,
+    #     update_method=renoweb.get_pickup_data,
+    #     update_interval=timedelta(
+    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    #     ),
+    # )
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
         name=DOMAIN,
         update_method=renoweb.get_pickup_data,
-        update_interval=timedelta(
-            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-        ),
+        update_interval=timedelta(minutes=2),
     )
 
     try:

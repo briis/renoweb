@@ -8,6 +8,7 @@ ATTR_NEXT_PICKUP_TEXT = "next_pickup"
 ATTR_NEXT_PICKUP_DATE = "next_pickup_date"
 ATTR_SCHEDULE = "schedule"
 ATTR_REFRESH_TIME = "refresh_time"
+ATTR_FORMATTED_STATE = "formatted_state"
 
 CONF_ADDRESS = "address"
 CONF_ADDRESS_ID = "address_id"

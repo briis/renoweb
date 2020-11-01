@@ -16,7 +16,6 @@ class RenoWebEntity(Entity):
         self.coordinator = coordinator
         self.renoweb = renoweb
         self.entity_object = entity_object
-        self.data = self.coordinator.data.get(entity_object)
         self._address_id = address_id
         self._municipality_id = municipality_id
         self._unique_id = f"{self.entity_object.replace(' ', '_')}_{self._address_id}"
@@ -40,6 +39,11 @@ class RenoWebEntity(Entity):
             "manufacturer": DEFAULT_BRAND,
             "via_device": (DOMAIN, self._address_id),
         }
+
+    @property
+    def _data(self):
+        """Return Data Object."""
+        return self.coordinator.data.get(self.entity_object)
 
     @property
     def unique_id(self):

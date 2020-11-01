@@ -18,6 +18,7 @@ from pyrenoweb import (
 )
 from .const import (
     ATTR_DESCRIPTION,
+    ATTR_FORMATTED_STATE,
     ATTR_NEXT_PICKUP_TEXT,
     ATTR_NEXT_PICKUP_DATE,
     ATTR_REFRESH_TIME,
@@ -73,7 +74,7 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.data.get("daysuntilpickup")
+        return self._data.get("daysuntilpickup")
 
     @property
     def unit_of_measurement(self):
@@ -103,12 +104,19 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes of the device."""
-        local_dt = dt.as_local(datetime.now())
+        local_dt = dt.now()
+        pickup_dt = datetime.fromtimestamp(
+            int(self._data.get("nextpickupdatetimestamp"))
+        )
+        format_dt = pickup_dt.strftime("%a d. %d/%m")
+        day_str = "dag" if self.state == 1 else "dage"
+        format_state = str(self.state) + " " + day_str + " (" + format_dt + ")"
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
-            ATTR_DESCRIPTION: self.data.get("description"),
-            ATTR_NEXT_PICKUP_TEXT: self.data.get("nextpickupdatetext"),
-            ATTR_NEXT_PICKUP_DATE: self.data.get("nextpickupdate"),
+            ATTR_DESCRIPTION: self._data.get("description"),
+            ATTR_NEXT_PICKUP_TEXT: self._data.get("nextpickupdatetext"),
+            ATTR_NEXT_PICKUP_DATE: self._data.get("nextpickupdate"),
             ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
-            ATTR_SCHEDULE: self.data.get("schedule"),
+            ATTR_SCHEDULE: self._data.get("schedule"),
+            ATTR_FORMATTED_STATE: format_state,
         }
