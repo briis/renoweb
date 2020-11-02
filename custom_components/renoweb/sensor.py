@@ -22,6 +22,7 @@ from .const import (
     ATTR_NEXT_PICKUP_TEXT,
     ATTR_NEXT_PICKUP_DATE,
     ATTR_REFRESH_TIME,
+    ATTR_SHORT_STATE_DK,
     ATTR_SCHEDULE,
     DEFAULT_ATTRIBUTION,
     DOMAIN,
@@ -116,6 +117,7 @@ class RenoWebSensor(RenoWebEntity, Entity):
         format_state = (
             str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
         )
+        short_state_dk = day_name + format_dt
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
             ATTR_DESCRIPTION: self._data.get("description"),
@@ -124,4 +126,5 @@ class RenoWebSensor(RenoWebEntity, Entity):
             ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
             ATTR_SCHEDULE: self._data.get("schedule"),
             ATTR_FORMATTED_STATE_DK: format_state,
+            ATTR_SHORT_STATE_DK: short_state_dk,
         }
