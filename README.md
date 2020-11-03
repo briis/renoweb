@@ -46,7 +46,13 @@ translation (Directory with all files)
 
 ## CONFIGURATION
 
+In order to add this Integration to Home Assistant, go to *Settings* and *Integrations*. If you just installed RenoWeb, do a Hard Refresh in your browser, while on this page, to ensure the Integration shows up.
 
+Now click the **+** button in the lower right corner, and then search for *Renoweb*. That should bring up the below screen:
+
+![](https://github.com/briis/renoweb/blob/main/config_flow.png)
+
+Now fill out the form and click the *SEND* button. The Integration should now find all data for your address and and the available sensors to Home Assistant. **Please note** that under Municipality you can either type the name of the Municipality or if you allready have the ID number, you can type in this instead of the name.
 
 ## SUPPORTED MUNICIPALITIES
 
