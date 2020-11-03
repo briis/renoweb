@@ -16,7 +16,7 @@
                     "update_interval": "Opdaterings interval (timer)"
                 },
                 "description": "Hent data fra RenoWeb ind i Home Assistant.",
-                "title": "RenoWeb Afalds afhentning"
+                "title": "RenoWeb Affaldsopsamling"
             }
         }
     },
