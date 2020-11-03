@@ -18,6 +18,7 @@ CONF_MUNICIPALITY = "municipality"
 CONF_MUNICIPALITY_ID = "municipality_id"
 CONF_ROAD_NAME = "road_name"
 CONF_UPDATE_INTERVAL = "update_interval"
+CONF_ZIPCODE = "zipcode"
 
 DEFAULT_ATTRIBUTION = "Data delivered by RenoWeb"
 DEFAULT_BRAND = "RenoWeb"

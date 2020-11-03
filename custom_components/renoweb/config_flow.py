@@ -24,6 +24,7 @@ from .const import (
     CONF_MUNICIPALITY_ID,
     CONF_ROAD_NAME,
     CONF_UPDATE_INTERVAL,
+    CONF_ZIPCODE,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
 )
@@ -56,6 +57,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             unique_data = await renoweb.find_renoweb_ids(
                 user_input[CONF_MUNICIPALITY],
+                user_input[CONF_ZIPCODE],
                 user_input[CONF_ROAD_NAME],
                 user_input[CONF_HOUSE_NUMBER],
             )
@@ -91,6 +93,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_ADDRESS_ID: address_id,
                 CONF_MUNICIPALITY_ID: municipality_id,
                 CONF_MUNICIPALITY: municipality_name,
+                CONF_ZIPCODE: user_input.get(CONF_ZIPCODE),
                 CONF_ROAD_NAME: user_input.get(CONF_ROAD_NAME),
                 CONF_HOUSE_NUMBER: user_input.get(CONF_HOUSE_NUMBER),
                 CONF_UPDATE_INTERVAL: user_input.get(CONF_UPDATE_INTERVAL),
@@ -104,6 +107,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_MUNICIPALITY): str,
+                    vol.Required(CONF_ZIPCODE): str,
                     vol.Required(CONF_ROAD_NAME): str,
                     vol.Required(CONF_HOUSE_NUMBER): str,
                     vol.Optional(
