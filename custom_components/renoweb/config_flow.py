@@ -75,6 +75,10 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         address = unique_data.get("address")
         address_id = unique_data.get("address_id")
         municipality_id = unique_data.get("municipality_id")
+        if user_input[CONF_MUNICIPALITY].isnumeric():
+            municipality_name = unique_data.get("municipality")
+        else:
+            municipality_name = user_input[CONF_MUNICIPALITY]
         entries = self._async_current_entries()
         for entry in entries:
             if entry.data[CONF_ADDRESS_ID] == address_id:
@@ -86,7 +90,7 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_ADDRESS: address,
                 CONF_ADDRESS_ID: address_id,
                 CONF_MUNICIPALITY_ID: municipality_id,
-                CONF_MUNICIPALITY: user_input[CONF_MUNICIPALITY],
+                CONF_MUNICIPALITY: municipality_name,
                 CONF_ROAD_NAME: user_input.get(CONF_ROAD_NAME),
                 CONF_HOUSE_NUMBER: user_input.get(CONF_HOUSE_NUMBER),
                 CONF_UPDATE_INTERVAL: user_input.get(CONF_UPDATE_INTERVAL),
