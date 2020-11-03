@@ -10,7 +10,7 @@
         "step": {
             "user": {
                 "data": {
-                    "municipality": "Kommune",
+                    "municipality": "Kommune (Navn eller ID)",
                     "road_name": "Vej navn",
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"
@@ -24,7 +24,7 @@
         "step": {
             "init": {
                 "data": {
-                    "municipality": "Kommune",
+                    "municipality": "Kommune (Navn eller ID)",
                     "road_name": "Vej navn",
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"

@@ -4,7 +4,7 @@
             "user": {
                 "title": "Location for Garbage Collection",
                 "data": {
-                    "municipality": "Municipality",
+                    "municipality": "Municipality (Name or ID)",
                     "road_name": "Road name",
                     "house_number": "House Number",
                     "update_interval": "Update Interval (Hours)"
@@ -23,7 +23,7 @@
         "step": {
             "init": {
                 "data": {
-                    "municipality": "Municipality",
+                    "municipality": "Municipality (Name or ID)",
                     "road_name": "Road name",
                     "house_number": "House Number",
                     "update_interval": "Update Interval (Hours)"
