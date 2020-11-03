@@ -44,7 +44,12 @@ string.json
 translation (Directory with all files)
 ```
 
+## CONFIGURATION
+
+
+
 ## SUPPORTED MUNICIPALITIES
+
 As of October 2020, this is the list of supported Municipalities:
 
 ```txt
@@ -66,6 +71,7 @@ Herlev - ID: 163
 Hillerød - ID: 219
 Hvidovre - ID: 167
 Høje-Taastrup - ID: 169
+Kerteminde - ID: 440 (Need to use the ID when adding)
 Køge - ID: 259
 Lejre - ID: 350
 Rebild - ID: 840
