@@ -11,6 +11,7 @@
             "user": {
                 "data": {
                     "municipality": "Kommune (Navn eller ID)",
+                    "zipcode": "Post nummer",
                     "road_name": "Vej navn",
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"
@@ -25,6 +26,7 @@
             "init": {
                 "data": {
                     "municipality": "Kommune (Navn eller ID)",
+                    "zipcode": "Post nummer",
                     "road_name": "Vej navn",
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"

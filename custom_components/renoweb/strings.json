@@ -5,6 +5,7 @@
                 "title": "Location for Garbage Collection",
                 "data": {
                     "municipality": "Municipality (Name or ID)",
+                    "zipcode": "Zip Code",
                     "road_name": "Road name",
                     "house_number": "House Number",
                     "update_interval": "Update Interval (Hours)"
@@ -24,6 +25,7 @@
             "init": {
                 "data": {
                     "municipality": "Municipality (Name or ID)",
+                    "zipcode": "Zip Code",
                     "road_name": "Road name",
                     "house_number": "House Number",
                     "update_interval": "Update Interval (Hours)"
