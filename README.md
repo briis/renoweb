@@ -52,7 +52,9 @@ Now click the **+** button in the lower right corner, and then search for *Renow
 
 ![](https://github.com/briis/renoweb/blob/main/config_flow.png)
 
-Now fill out the form and click the *SEND* button. The Integration should now find all data for your address and and the available sensors to Home Assistant. **Please note** that under Municipality you can either type the name of the Municipality or if you allready have the ID number, you can type in this instead of the name.
+Now fill out the form and click the *SEND* button. The Integration should now find all data for your address and add the available sensors to Home Assistant.
+
+**Please note** that under Municipality you can either type the name of the Municipality or if you allready have the ID number, you can type in this instead of the name.
 
 ## SUPPORTED MUNICIPALITIES
 
