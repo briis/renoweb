@@ -77,6 +77,7 @@ Greve - ID: 253
 Helsingør - ID: 217
 Herlev - ID: 163
 Hillerød - ID: 219
+Horsens - ID: 615 (Need to use the ID when adding)
 Hvidovre - ID: 167
 Høje-Taastrup - ID: 169
 Kerteminde - ID: 440 (Need to use the ID when adding)
