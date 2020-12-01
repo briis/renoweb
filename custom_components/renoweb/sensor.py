@@ -118,6 +118,10 @@ class RenoWebSensor(RenoWebEntity, Entity):
             str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
         )
         short_state_dk = day_name + format_dt
+        # Rewrite Attributes if no pickup schedule is supplied
+        if self.state == -1:
+            format_state = "Ikke Planlagt"
+            short_state_dk = "Ikke Planlagt"
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
             ATTR_DESCRIPTION: self._data.get("description"),
