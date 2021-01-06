@@ -5,7 +5,7 @@
     "documentation": "https://github.com/briis/renoweb",
     "issue_tracker": "https://github.com/briis/renoweb/issues",
     "requirements": [
-        "pyrenoweb==0.1.17"
+        "pyrenoweb==0.2.0"
     ],
     "codeowners": [
         "@briis"
