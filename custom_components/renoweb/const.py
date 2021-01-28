@@ -27,5 +27,3 @@ DEFAULT_SCAN_INTERVAL = 6
 DOMAIN = "renoweb"
 
 INTEGRATION_PLATFORMS = ["sensor"]
-
-UNIT_SENSOR = "days"

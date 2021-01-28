@@ -26,7 +26,6 @@ from .const import (
     ATTR_SCHEDULE,
     DEFAULT_ATTRIBUTION,
     DOMAIN,
-    UNIT_SENSOR,
 )
 from .entity import RenoWebEntity
 
@@ -80,7 +79,7 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return UNIT_SENSOR
+        return "dag" if self.state == 1 else "dage"
 
     @property
     def icon(self):
