@@ -57,6 +57,7 @@ Now fill out the form and click the *SEND* button. The Integration should now fi
 **Please note** that under Municipality you can either type the name of the Municipality or if you allready have the ID number, you can type in this instead of the name.
 
 ## SUPPORTED MUNICIPALITIES
+It is hard to tell exactly what Municipalities are supported. When pulling them from the API, the below are the ones found, but reality has shown that more Munipalities use the same API. So try and type in your Municipality, and see if it works, even though it is not on the list below.
 
 As of October 2020, this is the list of supported Municipalities:
 
