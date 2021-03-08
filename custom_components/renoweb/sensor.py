@@ -84,19 +84,22 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def icon(self):
         """Icon to use in the frontend."""
-        if self.entity_object in TYPE_RESIDUAL:
+        _type = self.entity_object
+        _type_idx = _type.rfind("_")
+        garbage_type = _type[0:_type_idx].replace("_", " ")
+        if garbage_type in TYPE_RESIDUAL:
             return f"mdi:delete"
-        elif self.entity_object in TYPE_PAPER:
+        elif garbage_type in TYPE_PAPER:
             return f"mdi:file"
-        elif self.entity_object in TYPE_METAL_GLASS:
+        elif garbage_type in TYPE_METAL_GLASS:
             return f"mdi:bottle-wine"
-        elif self.entity_object in TYPE_GLASS:
+        elif garbage_type in TYPE_GLASS:
             return f"mdi:bottle-wine"
-        elif self.entity_object in TYPE_HAVEAFFALD:
+        elif garbage_type in TYPE_HAVEAFFALD:
             return "mdi:tree"
-        elif self.entity_object in TYPE_PLASTIC:
+        elif garbage_type in TYPE_PLASTIC:
             return "mdi:cup"
-        elif self.entity_object in TYPE_STORSKRALD:
+        elif garbage_type in TYPE_STORSKRALD:
             return "mdi:truck"
         else:
             return f"mdi:delete"
