@@ -23,7 +23,8 @@ class RenoWebEntity(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        name = self.entity_object.replace("-", " ")
+
+        name = self._data.get("description").replace("-", " ")
         name = name.replace("_", " ")
         return f"{DOMAIN.capitalize()} {name}"
 
