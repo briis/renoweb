@@ -88,6 +88,7 @@ Rebild - ID: 840
 Ringkøbing-Skjern - ID: 760
 Roskilde - ID: 265
 Rudersdal - ID: 230
+Rødovre - ID: 0175
 Solrød - ID: 269
 Stevns - ID: 336
 Svendborg - ID: 479
