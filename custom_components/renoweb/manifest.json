@@ -4,11 +4,12 @@
     "config_flow": true,
     "documentation": "https://github.com/briis/renoweb",
     "issue_tracker": "https://github.com/briis/renoweb/issues",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "requirements": [
         "pyrenoweb==0.2.2"
     ],
     "codeowners": [
         "@briis"
-    ]
+    ],
+    "iot_class": "cloud_polling"
 }
