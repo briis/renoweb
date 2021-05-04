@@ -8,6 +8,7 @@
   * Rette i eventuelle automatiseringer, som anvender disse sensorer, af samme årsag som ovenfor.
 
   Beklager dette, men det er den eneste måde at sikre at alle data vises for alle.
+  Fixer issue #7
 * `FIXED`: Tilføjet **iot_class** til `manifest.json`, som krævet af Home Assistant fra version 2021.5
 
 ## Version 0.1.12-Beta
