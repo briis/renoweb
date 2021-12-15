@@ -1,5 +1,9 @@
 # Changelog for Renoweb Home Assistant Integration
 
+## Version 0.1.14
+
+* `FIXED`: Fixes issue #10, with a deprecation warning about `device_state_attributes`.
+
 ## Version 0.1.13
 
 * `FIXED`: **BREAKING CHANGE** Det viser sig at i nogle kommuner vil der forekomme afhentninger der hedder det samme - eksempelvis Haveaffald - men forekommer på forskellige tidspunkter. Hvis såddane forkommer, så ville kun den sidste af disse blive registreret. Denne version løser dette problem, ved at tilføje et unikt id til navnet. Men ved at gøre dette, så bryder det med tidligere versioner, som kun genererede et unikt id baseret på type. Så når man har opdateret til denne version, er det nødvendigt at:
