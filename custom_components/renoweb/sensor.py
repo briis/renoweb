@@ -58,7 +58,7 @@ async def async_setup_entry(
         sensors.append(
             RenoWebSensor(coordinator, renoweb, sensor, municipality_id, address_id)
         )
-        _LOGGER.debug(f"SENSOR ADDED: {sensor}")
+        _LOGGER.debug("SENSOR ADDED: %s", sensor)
     async_add_entities(sensors, True)
 
     return True
@@ -88,21 +88,21 @@ class RenoWebSensor(RenoWebEntity, Entity):
         _type_idx = _type.rfind("_")
         garbage_type = _type[0:_type_idx].replace("_", " ")
         if garbage_type in TYPE_RESIDUAL:
-            return f"mdi:delete"
-        elif garbage_type in TYPE_PAPER:
-            return f"mdi:file"
-        elif garbage_type in TYPE_METAL_GLASS:
-            return f"mdi:bottle-wine"
-        elif garbage_type in TYPE_GLASS:
-            return f"mdi:bottle-wine"
-        elif garbage_type in TYPE_HAVEAFFALD:
+            return "mdi:delete"
+        if garbage_type in TYPE_PAPER:
+            return "mdi:file"
+        if garbage_type in TYPE_METAL_GLASS:
+            return "mdi:bottle-wine"
+        if garbage_type in TYPE_GLASS:
+            return "mdi:bottle-wine"
+        if garbage_type in TYPE_HAVEAFFALD:
             return "mdi:tree"
-        elif garbage_type in TYPE_PLASTIC:
+        if garbage_type in TYPE_PLASTIC:
             return "mdi:cup"
-        elif garbage_type in TYPE_STORSKRALD:
+        if garbage_type in TYPE_STORSKRALD:
             return "mdi:truck"
-        else:
-            return f"mdi:delete"
+
+        return "mdi:delete"
 
     @property
     def extra_state_attributes(self):
