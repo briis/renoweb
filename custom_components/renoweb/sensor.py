@@ -65,7 +65,7 @@ async def async_setup_entry(
 
 
 class RenoWebSensor(RenoWebEntity, Entity):
-    """ Implementation of a RenoWeb Sensor. """
+    """Implementation of a RenoWeb Sensor."""
 
     def __init__(self, coordinator, renoweb, sensor, municipality_id, address_id):
         """Initialize the sensor."""
@@ -105,7 +105,7 @@ class RenoWebSensor(RenoWebEntity, Entity):
             return f"mdi:delete"
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return the state attributes of the device."""
         local_dt = dt.now()
         pickup_dt = datetime.fromtimestamp(
