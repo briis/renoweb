@@ -9,7 +9,7 @@
             "type": "python",
             "request": "attach",
             "justMyCode": false,
-            "port": 5678,
+            "port": 5680,
             "host": "localhost",
             "pathMappings": [
                 {
