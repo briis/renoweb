@@ -86,13 +86,13 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         _LOGGER.error(
             "Could not Authorize against Weatherflow Server. Please reinstall integration."
         )
-        return
+        return False
     except (ResultError, ServerDisconnectedError) as err:
         _LOGGER.warning(str(err))
-        raise ConfigEntryNotReady
+        raise ConfigEntryNotReady from err
     except RequestError as err:
-        _LOGGER.error(f"Error occured: {err}")
-        return
+        _LOGGER.error("Error occured: %s", err)
+        raise ConfigEntryNotReady from err
 
     # Fetch initial data so we have data when entities subscribe
     await coordinator.async_refresh()
