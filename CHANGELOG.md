@@ -1,5 +1,9 @@
 # Changelog for Renoweb Home Assistant Integration
 
+## Version 0.1.15
+
+- `FIXED`: Fixing deprecated `async_get_registry` that might start showing up in HA 2022.6
+
 ## Version 0.1.14
 
 * `FIXED`: Fixes issue #10, with a deprecation warning about `device_state_attributes`.
