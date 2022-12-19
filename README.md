@@ -59,6 +59,8 @@ Now fill out the form and click the *SEND* button. The Integration should now fi
 ## SUPPORTED MUNICIPALITIES
 It is hard to tell exactly what Municipalities are supported. When pulling them from the API, the below are the ones found, but reality has shown that more Munipalities use the same API. So try and type in your Municipality, and see if it works, even though it is not on the list below.
 
+If you **can't get your municipality to work** with this integration, I encourage you to try another approach developed by @kentora called [RenoWeb Legacy](https://github.com/kentora/renoweb-legacy). This uses a different part of the RenoWeb API, and might work for some other Municipalities.
+
 As of October 2020, this is the list of supported Municipalities:
 
 ```txt
