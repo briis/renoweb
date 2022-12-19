@@ -1,5 +1,9 @@
 # Changelog for Renoweb Home Assistant Integration
 
+## Version 0.1.16 (NOT RELEASED)
+
+- `FIXED`: Ensuring all Unit of Measurrement are always the same (dage). This ensures that the sensors can be used with Helpers like the Min/Max helper.
+
 ## Version 0.1.15
 
 - `FIXED`: Fixing deprecated `async_get_registry` that might start showing up in HA 2022.6

@@ -79,7 +79,7 @@ class RenoWebSensor(RenoWebEntity, Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return "dag" if self.state == 1 else "dage"
+        return "dage"
 
     @property
     def icon(self):
