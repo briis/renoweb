@@ -1,4 +1,5 @@
 """Support for the RenoWeb Garbage Collection Service."""
+from __future__ import annotations
 
 import asyncio
 import logging
@@ -7,20 +8,23 @@ from datetime import timedelta
 from aiohttp.client_exceptions import ServerDisconnectedError
 from pyrenoweb import (
     RenoWebData,
+    RenoWebSensorDescription,
     InvalidApiKey,
     RequestError,
     ResultError,
 )
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import homeassistant.helpers.device_registry as dr
 from homeassistant.helpers.typing import ConfigType, HomeAssistantType
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
     API_KEY,
+    CONFIG_OPTIONS,
     CONF_ADDRESS,
     CONF_ADDRESS_ID,
     CONF_MUNICIPALITY_ID,
@@ -31,31 +35,42 @@ from .const import (
     DOMAIN,
     INTEGRATION_PLATFORMS,
 )
+from .models import RenoWebEntryData
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
-    """Set up configured RenoWeb."""
-    # We allow setup only through config flow type of config
-    return True
+@callback
+def _async_import_options_from_data_if_missing(hass: HomeAssistant, entry: ConfigEntry):
+    options = dict(entry.options)
+    data = dict(entry.data)
+    modified = False
+    for importable_option in CONFIG_OPTIONS:
+        if importable_option not in entry.options and importable_option in entry.data:
+            options[importable_option] = entry.data[importable_option]
+            del data[importable_option]
+            modified = True
+
+    if modified:
+        hass.config_entries.async_update_entry(entry, data=data, options=options)
 
 
-async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up RenoWeb platforms as config entry."""
+    _async_import_options_from_data_if_missing(hass, entry)
 
-    if not entry.options:
-        hass.config_entries.async_update_entry(
-            entry,
-            options={
-                CONF_UPDATE_INTERVAL: entry.data.get(
-                    CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
-                ),
-            },
-        )
+    # if not entry.options:
+    #     hass.config_entries.async_update_entry(
+    #         entry,
+    #         options={
+    #             CONF_UPDATE_INTERVAL: entry.data.get(
+    #                 CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
+    #             ),
+    #         },
+    #     )
 
-    session = aiohttp_client.async_get_clientsession(hass)
-    renoweb = RenoWebData(
+    session = async_create_clientsession(hass)
+    renowebapi = RenoWebData(
         API_KEY,
         entry.data.get(CONF_MUNICIPALITY_ID),
         entry.data.get(CONF_ADDRESS_ID),
@@ -63,20 +78,20 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     )
     _LOGGER.debug("Connected to RenoWeb Platform")
 
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
+    # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
 
-    coordinator = DataUpdateCoordinator(
-        hass,
-        _LOGGER,
-        name=DOMAIN,
-        update_method=renoweb.get_pickup_data,
-        update_interval=timedelta(
-            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-        ),
-    )
+    # coordinator = DataUpdateCoordinator(
+    #     hass,
+    #     _LOGGER,
+    #     name=DOMAIN,
+    #     update_method=renoweb.fetch_waste_data,
+    #     update_interval=timedelta(
+    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    #     ),
+    # )
 
     try:
-        await renoweb.get_pickup_data()
+        await renowebapi.fetch_waste_data()
     except InvalidApiKey:
         _LOGGER.error(
             "Could not Authorize against Weatherflow Server. Please reinstall integration."
@@ -89,26 +104,47 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         _LOGGER.error("Error occured: %s", err)
         raise ConfigEntryNotReady from err
 
-    # Fetch initial data so we have data when entities subscribe
-    await coordinator.async_refresh()
-    hass.data[DOMAIN][entry.entry_id] = {
-        "coordinator": coordinator,
-        "renoweb": renoweb,
-        "municipality_id": entry.data.get(CONF_MUNICIPALITY_ID),
-        "address_id": entry.data.get(CONF_ADDRESS_ID),
-    }
+    if entry.unique_id is None:
+        hass.config_entries.async_update_entry(
+            entry, unique_id=entry.data.get(CONF_ADDRESS_ID)
+        )
+
+    async def async_update_data():
+        """Obtain the latest data from RenoWeb."""
+        try:
+            data: RenoWebSensorDescription = await renowebapi.fetch_waste_data()
+            return data
+
+        except (ResultError, ServerDisconnectedError) as err:
+            raise UpdateFailed(f"Error while retreiving data: {err}") from err
+
+    coordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name=DOMAIN,
+        update_method=async_update_data,
+        update_interval=timedelta(
+            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        ),
+    )
+    await coordinator.async_config_entry_first_refresh()
+    if not coordinator.last_update_success:
+        raise ConfigEntryNotReady
+
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = RenoWebEntryData(
+        coordinator=coordinator,
+        renoweb=renowebapi,
+        municipality_id=entry.data.get(CONF_MUNICIPALITY_ID),
+        address_id=entry.options.get(CONF_ADDRESS_ID),
+    )
 
     await _async_get_or_create_renoweb_device_in_registry(
         hass, entry, entry.data.get(CONF_ADDRESS_ID)
     )
 
-    for platform in INTEGRATION_PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
+    hass.config_entries.async_setup_platforms(entry, INTEGRATION_PLATFORMS)
 
-    if not entry.update_listeners:
-        entry.add_update_listener(async_update_options)
+    entry.async_on_unload(entry.add_update_listener(_async_options_updated))
 
     return True
 
@@ -123,29 +159,83 @@ async def _async_get_or_create_renoweb_device_in_registry(
         connections={(dr.CONNECTION_NETWORK_MAC, device_key)},
         identifiers={(DOMAIN, device_key)},
         manufacturer=DEFAULT_BRAND,
-        name=entry.data[CONF_ADDRESS],
+        name=entry.options[CONF_ADDRESS],
         model=DEFAULT_BRAND,
         sw_version=DEFAULT_API_VERSION,
     )
 
 
-async def async_update_options(hass: HomeAssistantType, entry: ConfigEntry):
+async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry):
     """Update options."""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
-    """Unload Unifi Protect config entry."""
-    unload_ok = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, component)
-                for component in INTEGRATION_PLATFORMS
-            ]
-        )
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload WeatherFlow entry."""
+    unload_ok = await hass.config_entries.async_unload_platforms(
+        entry, INTEGRATION_PLATFORMS
     )
-
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
-
     return unload_ok
+
+    # Fetch initial data so we have data when entities subscribe
+
+
+#     await coordinator.async_refresh()
+#     hass.data[DOMAIN][entry.entry_id] = {
+#         "coordinator": coordinator,
+#         "renoweb": renoweb,
+#         "municipality_id": entry.data.get(CONF_MUNICIPALITY_ID),
+#         "address_id": entry.data.get(CONF_ADDRESS_ID),
+#     }
+
+#     await _async_get_or_create_renoweb_device_in_registry(
+#         hass, entry, entry.data.get(CONF_ADDRESS_ID)
+#     )
+
+#     for platform in INTEGRATION_PLATFORMS:
+#         hass.async_create_task(
+#             hass.config_entries.async_forward_entry_setup(entry, platform)
+#         )
+
+#     if not entry.update_listeners:
+#         entry.add_update_listener(async_update_options)
+
+#     return True
+
+
+# async def _async_get_or_create_renoweb_device_in_registry(
+#     hass: HomeAssistantType, entry: ConfigEntry, address_id
+# ) -> None:
+#     device_registry = dr.async_get(hass)
+#     device_key = f"{address_id}"
+#     device_registry.async_get_or_create(
+#         config_entry_id=entry.entry_id,
+#         connections={(dr.CONNECTION_NETWORK_MAC, device_key)},
+#         identifiers={(DOMAIN, device_key)},
+#         manufacturer=DEFAULT_BRAND,
+#         name=entry.data[CONF_ADDRESS],
+#         model=DEFAULT_BRAND,
+#         sw_version=DEFAULT_API_VERSION,
+#     )
+
+
+# async def async_update_options(hass: HomeAssistantType, entry: ConfigEntry):
+#     """Update options."""
+#     await hass.config_entries.async_reload(entry.entry_id)
+
+
+# async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
+#     """Unload Unifi Protect config entry."""
+#     unload_ok = all(
+#         await asyncio.gather(
+#             *[
+#                 hass.config_entries.async_forward_entry_unload(entry, component)
+#                 for component in INTEGRATION_PLATFORMS
+#             ]
+#         )
+#     )
+
+#     if unload_ok:
+#         hass.data[DOMAIN].pop(entry.entry_id)
+
+#     return unload_ok
