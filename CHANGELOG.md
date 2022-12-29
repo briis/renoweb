@@ -1,6 +1,6 @@
 # Changelog for Renoweb Home Assistant Integration
 
-## Version 0.1.16 (NOT RELEASED)
+## Version 0.1.16
 
 - `FIXED`: Ensuring all Unit of Measurrement are always the same (dage). This ensures that the sensors can be used with Helpers like the Min/Max helper.
 - `ADDED`: Added new sensor called `sensor.renoweb_days_until_next_pickup`, which shows the number of days until the next pick-up of any of the containers.
