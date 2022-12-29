@@ -1,5 +1,14 @@
 # Changelog for Renoweb Home Assistant Integration
 
+## Version 1.0.0 (NOT RELEASED)
+
+The module `pyrenoweb` has now been partially rewritten to deliver the data in a different format, making it more similar to other Waste Integrations, and also easier to maintain.
+
+This then also sparks a major **BREAKING CHANGE** as the sensors are now cdifferent from before. So I would recommend that you delete the current integration and then Re-Install. This will ensure you have no obsolete sensors around in the system.
+
+There is no change in the way data is retrieved, so the old version will still work fine - so if you don't wan't to upgrade, just stay on Version 0.1.16.
+
+
 ## Version 0.1.16
 
 - `FIXED`: Ensuring all Unit of Measurrement are always the same (dage). This ensures that the sensors can be used with Helpers like the Min/Max helper.
