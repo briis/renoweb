@@ -2,30 +2,12 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, asdict
 
-from datetime import datetime
-from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
-    SensorDeviceClass,
-    SensorEntity,
-    SensorEntityDescription,
-)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.typing import StateType
-from homeassistant.util.dt import dt
-from homeassistant.const import ATTR_ATTRIBUTION
-from pyrenoweb import (
-    TYPE_METAL_GLASS,
-    TYPE_PAPER,
-    TYPE_RESIDUAL,
-    TYPE_PLASTIC,
-    TYPE_STORSKRALD,
-    TYPE_HAVEAFFALD,
-    TYPE_GLASS,
-)
+
 from .const import (
     ATTR_DESCRIPTION,
     ATTR_FORMATTED_STATE_DK,
@@ -53,24 +35,9 @@ async def async_setup_entry(
     coordinator = entry_data.coordinator
     municipality_id = entry_data.municipality_id
     address_id = entry_data.address_id
-    # if not coordinator.data:
-    #     return
-
-    # renowebapi = hass.data[DOMAIN][entry.entry_id]["renoweb"]
-    # if not renoweb:
-    #     return
-
-    # municipality_id = hass.data[DOMAIN][entry.entry_id]["municipality_id"]
-    # if not municipality_id:
-    #     return
-
-    # address_id = hass.data[DOMAIN][entry.entry_id]["address_id"]
-    # if not address_id:
-    #     return
 
     sensors = []
     for sensor in coordinator.data:
-        _LOGGER.debug("SENSOR ADDED: %s", sensor.name)
         sensors.append(
             RenoWebSensor(
                 coordinator,
@@ -81,26 +48,9 @@ async def async_setup_entry(
                 entry,
             )
         )
+        _LOGGER.debug("SENSOR ADDED: %s", sensor.name)
+
     async_add_entities(sensors)
-
-    # entities = []
-    # _LOGGER.debug("Data %s", coordinator.data)
-    # for description in SENSOR_TYPES:
-    #     #        if getattr(coordinator.data, description.key) is not None:
-    #     entities.append(
-    #         RenoWebSensor(
-    #             coordinator,
-    #             renowebapi,
-    #             description,
-    #             municipality_id,
-    #             address_id,
-    #             entry,
-    #         )
-    #     )
-    #     #
-    #     _LOGGER.debug("Adding sensor entity %s", description.name)
-
-    # async_add_entities(entities)
 
 
 class RenoWebSensor(RenoWebEntity, Entity):
@@ -128,6 +78,8 @@ class RenoWebSensor(RenoWebEntity, Entity):
             address_id,
             entries,
         )
+        self._attr_name = f"{DOMAIN.capitalize()} {self.entity_object.name}"
+
         # if self.entity_description.suggested_unit_of_measurement is None:
         #     self._attr_native_unit_of_measurement = ""
 
