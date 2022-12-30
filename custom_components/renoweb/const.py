@@ -8,6 +8,7 @@ ATTR_DATE_SHORT = "date_short"
 ATTR_DAYS_TO = "days_to_next_pickup"
 ATTR_ICON_COLOR = "icon_color"
 ATTR_SCHEDULE = "schedule"
+ATTR_STATE_TEXT = "state_text"
 ATTR_TYPE_ID = "type_id"
 ATTR_VALID_DATA = "valid_data"
 

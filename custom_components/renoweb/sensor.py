@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+import datetime
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.sensor import (
@@ -20,6 +21,7 @@ from .const import (
     ATTR_DAYS_TO,
     ATTR_ICON_COLOR,
     ATTR_SCHEDULE,
+    ATTR_STATE_TEXT,
     ATTR_TYPE_ID,
     ATTR_VALID_DATA,
     DOMAIN,
@@ -205,6 +207,7 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
             ATTR_DAYS_TO: self.device_data["days_to"],
             ATTR_ICON_COLOR: self.device_data["icon_color"],
             ATTR_SCHEDULE: self.device_data["schedule"],
+            ATTR_STATE_TEXT: self.device_data["template_text"],
             ATTR_TYPE_ID: self.device_data["id"],
             ATTR_VALID_DATA: self.device_data["valid_data"],
         }
