@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass, asdict
+
 from datetime import datetime
 from homeassistant.components.sensor import (
     STATE_CLASS_MEASUREMENT,
@@ -10,11 +12,12 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.helpers.typing import StateType
 from homeassistant.util.dt import dt
 from homeassistant.const import ATTR_ATTRIBUTION
 from pyrenoweb import (
-    RenoWebSensorDescription,
     TYPE_METAL_GLASS,
     TYPE_PAPER,
     TYPE_RESIDUAL,
@@ -36,6 +39,7 @@ from .const import (
 )
 from .entity import RenoWebEntity
 from .models import RenoWebEntryData
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,7 +70,7 @@ async def async_setup_entry(
 
     sensors = []
     for sensor in coordinator.data:
-        _LOGGER.debug("SENSOR ADDED: %s", sensor)
+        _LOGGER.debug("SENSOR ADDED: %s", sensor.name)
         sensors.append(
             RenoWebSensor(
                 coordinator,
@@ -79,10 +83,27 @@ async def async_setup_entry(
         )
     async_add_entities(sensors)
 
-    return True
+    # entities = []
+    # _LOGGER.debug("Data %s", coordinator.data)
+    # for description in SENSOR_TYPES:
+    #     #        if getattr(coordinator.data, description.key) is not None:
+    #     entities.append(
+    #         RenoWebSensor(
+    #             coordinator,
+    #             renowebapi,
+    #             description,
+    #             municipality_id,
+    #             address_id,
+    #             entry,
+    #         )
+    #     )
+    #     #
+    #     _LOGGER.debug("Adding sensor entity %s", description.name)
+
+    # async_add_entities(entities)
 
 
-class RenoWebSensor(RenoWebEntity, SensorEntity):
+class RenoWebSensor(RenoWebEntity, Entity):
     """Implementation of a RenoWeb Sensor."""
 
     # pylint: disable=too-many-instance-attributes
@@ -106,6 +127,18 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
             municipality_id,
             address_id,
             entries,
+        )
+        # if self.entity_description.suggested_unit_of_measurement is None:
+        #     self._attr_native_unit_of_measurement = ""
+
+    @property
+    def native_value(self) -> StateType:
+        """Return the state of the sensor."""
+
+        return (
+            getattr(self.coordinator.data, self.entity_description.date)
+            if self.coordinator.data
+            else None
         )
 
     # @property

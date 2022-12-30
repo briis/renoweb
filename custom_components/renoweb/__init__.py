@@ -8,7 +8,6 @@ from datetime import timedelta
 from aiohttp.client_exceptions import ServerDisconnectedError
 from pyrenoweb import (
     RenoWebData,
-    RenoWebSensorDescription,
     InvalidApiKey,
     RequestError,
     ResultError,
@@ -112,7 +111,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def async_update_data():
         """Obtain the latest data from RenoWeb."""
         try:
-            data: RenoWebSensorDescription = await renowebapi.fetch_waste_data()
+            data = await renowebapi.fetch_waste_data()
             return data
 
         except (ResultError, ServerDisconnectedError) as err:

@@ -9,9 +9,8 @@ from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from pyrenoweb import RenoWebSensorDescription
 
-from .const import DOMAIN, DEFAULT_ATTRIBUTION
+from .const import DOMAIN, DEFAULT_ATTRIBUTION, DEFAULT_BRAND
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,13 +26,16 @@ class RenoWebEntity(Entity):
         self,
         coordinator: DataUpdateCoordinator,
         renowebapi,
-        entity_object: RenoWebSensorDescription,
+        entity_object,
         municipality_id,
         address_id,
         entries: ConfigEntry,
     ):
         """Initialize the entity."""
         super().__init__()
+
+        if entity_object:
+            self.entity_description = entity_object
 
         self.coordinator = coordinator
         self.renowebapi = renowebapi
@@ -45,6 +47,22 @@ class RenoWebEntity(Entity):
         self._attr_available = self.coordinator.last_update_success
         self._attr_unique_id = f"{municipality_id}_{self.entity_object.key}"
         self._attr_name = f"{DOMAIN.capitalize()} {self.entity_object.name}"
+        self._attr_device_info = DeviceInfo(
+            manufacturer=DEFAULT_BRAND,
+            via_device=(DOMAIN, self.entry.unique_id),
+            connections={(dr.CONNECTION_NETWORK_MAC, self.entry.unique_id)},
+            # configuration_url=f"https://tempestwx.com/station/{self.station_data.key}/grid",
+        )
+
+    # @property
+    # def native_value(self) -> StateType:
+    #     """Return the state of the sensor."""
+
+    #     return (
+    #         getattr(self.coordinator.data, self.entity_object.date)
+    #         if self.coordinator.data
+    #         else None
+    #     )
 
     @property
     def extra_state_attributes(self):
