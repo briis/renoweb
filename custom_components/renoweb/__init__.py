@@ -134,7 +134,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinator=coordinator,
         renoweb=renowebapi,
         municipality_id=entry.data.get(CONF_MUNICIPALITY_ID),
-        address_id=entry.options.get(CONF_ADDRESS_ID),
+        address_id=entry.data.get(CONF_ADDRESS_ID),
     )
 
     await _async_get_or_create_renoweb_device_in_registry(

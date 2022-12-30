@@ -2,26 +2,73 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+    SensorDeviceClass,
+)
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.typing import StateType
 
 from .const import (
-    ATTR_DESCRIPTION,
-    ATTR_FORMATTED_STATE_DK,
-    ATTR_NEXT_PICKUP_TEXT,
-    ATTR_NEXT_PICKUP_DATE,
-    ATTR_REFRESH_TIME,
-    ATTR_SHORT_STATE_DK,
+    ATTR_DAYS_TO,
+    ATTR_ICON_COLOR,
     ATTR_SCHEDULE,
-    DEFAULT_ATTRIBUTION,
+    ATTR_TYPE_ID,
+    ATTR_VALID_DATA,
     DOMAIN,
 )
 from .entity import RenoWebEntity
 from .models import RenoWebEntryData
 
+
+@dataclass
+class RenoWebSensorEntityDescription(SensorEntityDescription):
+    """Describes RenowWeb sensor."""
+
+
+SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
+    RenoWebSensorEntityDescription(
+        key="Restaffald-Madaffald",
+        name="Rest- og Madaffald",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    RenoWebSensorEntityDescription(
+        key="PAPPI",
+        name="Papir og Plastik",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Metal-Glas",
+        name="Metal og Glas",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Farligt affald",
+        name="Farligt affald",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Tekstiler",
+        name="Tekstiler",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Next Collection",
+        name="Næste tømning",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,24 +83,22 @@ async def async_setup_entry(
     municipality_id = entry_data.municipality_id
     address_id = entry_data.address_id
 
-    sensors = []
-    for sensor in coordinator.data:
-        sensors.append(
+    entities = []
+    for description in SENSOR_TYPES:
+        entities.append(
             RenoWebSensor(
                 coordinator,
                 renowebapi,
-                sensor,
+                description,
                 municipality_id,
                 address_id,
                 entry,
             )
         )
-        _LOGGER.debug("SENSOR ADDED: %s", sensor.name)
-
-    async_add_entities(sensors)
+    async_add_entities(entities)
 
 
-class RenoWebSensor(RenoWebEntity, Entity):
+class RenoWebSensor(RenoWebEntity, SensorEntity):
     """Implementation of a RenoWeb Sensor."""
 
     # pylint: disable=too-many-instance-attributes
@@ -78,81 +123,26 @@ class RenoWebSensor(RenoWebEntity, Entity):
             address_id,
             entries,
         )
-        self._attr_name = f"{DOMAIN.capitalize()} {self.entity_object.name}"
-
-        # if self.entity_description.suggested_unit_of_measurement is None:
-        #     self._attr_native_unit_of_measurement = ""
+        self._attr_name = f"{DOMAIN.capitalize()} {self.entity_description.name}"
 
     @property
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
+        return self.device_data["date"]
 
-        return (
-            getattr(self.coordinator.data, self.entity_description.date)
-            if self.coordinator.data
-            else None
-        )
+    @property
+    def icon(self):
+        """Return icon for the sensor."""
+        return self.device_data["icon"]
 
-    # @property
-    # def state(self):
-    #     """Return the state of the sensor."""
-    #     return self._data.get("daysuntilpickup")
-
-    # @property
-    # def unit_of_measurement(self):
-    #     """Return the unit of measurement."""
-    #     return "dage"
-
-    # @property
-    # def icon(self):
-    #     """Icon to use in the frontend."""
-    #     _type = self.entity_object
-    #     _type_idx = _type.rfind("_")
-    #     garbage_type = _type[0:_type_idx].replace("_", " ")
-    #     if garbage_type in TYPE_RESIDUAL:
-    #         return "mdi:delete"
-    #     if garbage_type in TYPE_PAPER:
-    #         return "mdi:file"
-    #     if garbage_type in TYPE_METAL_GLASS:
-    #         return "mdi:bottle-wine"
-    #     if garbage_type in TYPE_GLASS:
-    #         return "mdi:bottle-wine"
-    #     if garbage_type in TYPE_HAVEAFFALD:
-    #         return "mdi:tree"
-    #     if garbage_type in TYPE_PLASTIC:
-    #         return "mdi:cup"
-    #     if garbage_type in TYPE_STORSKRALD:
-    #         return "mdi:truck"
-
-    #     return "mdi:delete"
-
-    # @property
-    # def extra_state_attributes(self):
-    #     """Return the state attributes of the device."""
-    #     local_dt = dt.now()
-    #     pickup_dt = datetime.fromtimestamp(
-    #         int(self._data.get("nextpickupdatetimestamp"))
-    #     )
-    #     day_number = pickup_dt.weekday()
-    #     day_list = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
-    #     day_name = day_list[day_number]
-    #     format_dt = pickup_dt.strftime(" d. %d/%m")
-    #     day_str = "dag" if self.state == 1 else "dage"
-    #     format_state = (
-    #         str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
-    #     )
-    #     short_state_dk = day_name + format_dt
-    #     # Rewrite Attributes if no pickup schedule is supplied
-    #     if self.state == -1:
-    #         format_state = "Ikke Planlagt"
-    #         short_state_dk = "Ikke Planlagt"
-    #     return {
-    #         ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
-    #         ATTR_DESCRIPTION: self._data.get("description"),
-    #         ATTR_NEXT_PICKUP_TEXT: self._data.get("nextpickupdatetext"),
-    #         ATTR_NEXT_PICKUP_DATE: self._data.get("nextpickupdate"),
-    #         ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
-    #         ATTR_SCHEDULE: self._data.get("schedule"),
-    #         ATTR_FORMATTED_STATE_DK: format_state,
-    #         ATTR_SHORT_STATE_DK: short_state_dk,
-    #     }
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the device."""
+        return {
+            **super().extra_state_attributes,
+            ATTR_DAYS_TO: self.device_data["days_to"],
+            ATTR_ICON_COLOR: self.device_data["icon_color"],
+            ATTR_SCHEDULE: self.device_data["schedule"],
+            ATTR_TYPE_ID: self.device_data["id"],
+            ATTR_VALID_DATA: self.device_data["valid_data"],
+        }
