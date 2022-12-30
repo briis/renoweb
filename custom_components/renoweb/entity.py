@@ -1,6 +1,7 @@
 """Shared Entity Definition for RenoWeb Integration."""
 from __future__ import annotations
 
+import json
 import logging
 
 import homeassistant.helpers.device_registry as dr

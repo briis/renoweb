@@ -16,6 +16,8 @@ from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.typing import StateType
 
 from .const import (
+    ATTR_DATE_LONG,
+    ATTR_DATE_SHORT,
     ATTR_DAYS_TO,
     ATTR_ICON_COLOR,
     ATTR_SCHEDULE,
@@ -43,84 +45,84 @@ SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
     RenoWebSensorEntityDescription(
         key="Restaffald-Madaffald",
         name="Rest- og Madaffald",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="PAPPI",
         name="Papir og Plastik",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Metal-Glas",
         name="Metal og Glas",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Farligt affald",
         name="Farligt affald",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Tekstiler",
         name="Tekstiler",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Jern",
         name="Jern",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Papir",
         name="Papir",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Pap",
         name="Pap",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Plast Metal",
         name="Plast og Metal",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Storskrald",
         name="Storskrald",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Haveaffald",
         name="Haveaffald",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Next Collection",
         name="Næste tømning",
-        device_class=SensorDeviceClass.TIMESTAMP,
+        device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=True,
     ),
@@ -187,10 +189,7 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
     @property
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
-        datetime_obj = datetime.datetime.strptime(
-            self.device_data["date"], "%Y-%m-%d %H:%M:%S%z"
-        )
-        return datetime_obj
+        return self.device_data["date"]
 
     @property
     def icon(self):
@@ -202,6 +201,8 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
         """Return the state attributes of the device."""
         return {
             **super().extra_state_attributes,
+            ATTR_DATE_LONG: self.device_data["date_long"],
+            ATTR_DATE_SHORT: self.device_data["date_short"],
             ATTR_DAYS_TO: self.device_data["days_to"],
             ATTR_ICON_COLOR: self.device_data["icon_color"],
             ATTR_SCHEDULE: self.device_data["schedule"],

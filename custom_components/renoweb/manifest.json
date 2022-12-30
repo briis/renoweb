@@ -6,7 +6,7 @@
     "issue_tracker": "https://github.com/briis/renoweb/issues",
     "version": "1.0.0",
     "requirements": [
-        "pyrenoweb==1.0.8"
+        "pyrenoweb==1.0.9"
     ],
     "codeowners": [
         "@briis"
