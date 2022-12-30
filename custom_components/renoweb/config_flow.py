@@ -81,10 +81,10 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             municipality_name = unique_data.get("municipality")
         else:
             municipality_name = user_input[CONF_MUNICIPALITY]
-        entries = self._async_current_entries()
-        for entry in entries:
-            if entry.data[CONF_ADDRESS_ID] == address_id:
-                return self.async_abort(reason="name_exists")
+
+        unique_id = str(address_id)
+        await self.async_set_unique_id(unique_id)
+        self._abort_if_unique_id_configured()
 
         return self.async_create_entry(
             title=address,

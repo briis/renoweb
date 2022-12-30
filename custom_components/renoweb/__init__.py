@@ -25,6 +25,7 @@ from .const import (
     CONFIG_OPTIONS,
     CONF_ADDRESS,
     CONF_ADDRESS_ID,
+    CONF_MUNICIPALITY,
     CONF_MUNICIPALITY_ID,
     CONF_UPDATE_INTERVAL,
     DEFAULT_API_VERSION,
@@ -114,9 +115,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         address_id=entry.data.get(CONF_ADDRESS_ID),
     )
 
-    await _async_get_or_create_renoweb_device_in_registry(
-        hass, entry, entry.data.get(CONF_ADDRESS_ID)
-    )
+    await _async_get_or_create_renoweb_device_in_registry(hass, entry)
 
     hass.config_entries.async_setup_platforms(entry, INTEGRATION_PLATFORMS)
 
@@ -126,16 +125,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def _async_get_or_create_renoweb_device_in_registry(
-    hass: HomeAssistantType, entry: ConfigEntry, address_id
+    hass: HomeAssistantType, entry: ConfigEntry
 ) -> None:
     device_registry = dr.async_get(hass)
-    device_key = f"{address_id}"
+
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
-        connections={(dr.CONNECTION_NETWORK_MAC, device_key)},
-        identifiers={(DOMAIN, device_key)},
+        connections={(dr.CONNECTION_NETWORK_MAC, entry.unique_id)},
+        identifiers={(DOMAIN, entry.unique_id)},
         manufacturer=DEFAULT_BRAND,
-        name=entry.options[CONF_ADDRESS],
+        name=f"{DOMAIN.capitalize()} {entry.data.get(CONF_ADDRESS_ID)}",
         model=DEFAULT_BRAND,
         sw_version=DEFAULT_API_VERSION,
     )

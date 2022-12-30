@@ -50,6 +50,8 @@ class RenoWebEntity(Entity):
 
         self._attr_available = self.coordinator.last_update_success
         self._attr_unique_id = f"{municipality_id}_{self.entity_description.key}"
+        self._attr_name = f"{self.entity_description.name}"
+
         self._attr_device_info = DeviceInfo(
             manufacturer=DEFAULT_BRAND,
             via_device=(DOMAIN, self.entry.unique_id),

@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-import datetime
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.sensor import (
@@ -185,7 +184,6 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
             address_id,
             entries,
         )
-        self._attr_name = f"{DOMAIN.capitalize()} {self.entity_description.name}"
 
     @property
     def native_value(self) -> StateType:
