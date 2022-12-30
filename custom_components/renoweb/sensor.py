@@ -27,7 +27,14 @@ from .models import RenoWebEntryData
 
 
 @dataclass
-class RenoWebSensorEntityDescription(SensorEntityDescription):
+class RenoWebRequiredKeysMixin:
+    """Mixin for required keys."""
+
+    always_add: bool
+
+
+@dataclass
+class RenoWebSensorEntityDescription(SensorEntityDescription, RenoWebRequiredKeysMixin):
     """Describes RenowWeb sensor."""
 
 
@@ -37,36 +44,84 @@ SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
         name="Rest- og Madaffald",
         device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="PAPPI",
         name="Papir og Plastik",
         device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Metal-Glas",
         name="Metal og Glas",
         device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Farligt affald",
         name="Farligt affald",
         device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Tekstiler",
         name="Tekstiler",
         device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Jern",
+        name="Jern",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Papir",
+        name="Papir",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Pap",
+        name="Pap",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Plast Metal",
+        name="Plast og Metal",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Storskrald",
+        name="Storskrald",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
+    ),
+    RenoWebSensorEntityDescription(
+        key="Haveaffald",
+        name="Haveaffald",
+        device_class=SensorDeviceClass.DATE,
+        state_class=SensorStateClass.MEASUREMENT,
+        always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Next Collection",
         name="Næste tømning",
         device_class=SensorDeviceClass.DATE,
         state_class=SensorStateClass.MEASUREMENT,
+        always_add=True,
     ),
 )
 
@@ -85,16 +140,19 @@ async def async_setup_entry(
 
     entities = []
     for description in SENSOR_TYPES:
-        entities.append(
-            RenoWebSensor(
-                coordinator,
-                renowebapi,
-                description,
-                municipality_id,
-                address_id,
-                entry,
+        if description.always_add or (
+            f"{description.key}_{municipality_id}_{address_id}" in coordinator.data
+        ):
+            entities.append(
+                RenoWebSensor(
+                    coordinator,
+                    renowebapi,
+                    description,
+                    municipality_id,
+                    address_id,
+                    entry,
+                )
             )
-        )
     async_add_entities(entities)
 
 
