@@ -1,6 +1,7 @@
 """Sensors for the RenoWeb Garbage Collection Service."""
 from __future__ import annotations
 
+import datetime
 import logging
 from dataclasses import dataclass
 
@@ -42,84 +43,84 @@ SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
     RenoWebSensorEntityDescription(
         key="Restaffald-Madaffald",
         name="Rest- og Madaffald",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="PAPPI",
         name="Papir og Plastik",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Metal-Glas",
         name="Metal og Glas",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Farligt affald",
         name="Farligt affald",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Tekstiler",
         name="Tekstiler",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Jern",
         name="Jern",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Papir",
         name="Papir",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Pap",
         name="Pap",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Plast Metal",
         name="Plast og Metal",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Storskrald",
         name="Storskrald",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Haveaffald",
         name="Haveaffald",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=False,
     ),
     RenoWebSensorEntityDescription(
         key="Next Collection",
         name="Næste tømning",
-        device_class=SensorDeviceClass.DATE,
+        device_class=SensorDeviceClass.TIMESTAMP,
         state_class=SensorStateClass.MEASUREMENT,
         always_add=True,
     ),
@@ -186,7 +187,10 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
     @property
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
-        return self.device_data["date"]
+        datetime_obj = datetime.datetime.strptime(
+            self.device_data["date"], "%Y-%m-%d %H:%M:%S%z"
+        )
+        return datetime_obj
 
     @property
     def icon(self):

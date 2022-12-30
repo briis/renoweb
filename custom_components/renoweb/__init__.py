@@ -1,7 +1,6 @@
 """Support for the RenoWeb Garbage Collection Service."""
 from __future__ import annotations
 
-import asyncio
 import logging
 from datetime import timedelta
 
@@ -58,16 +57,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up RenoWeb platforms as config entry."""
     _async_import_options_from_data_if_missing(hass, entry)
 
-    # if not entry.options:
-    #     hass.config_entries.async_update_entry(
-    #         entry,
-    #         options={
-    #             CONF_UPDATE_INTERVAL: entry.data.get(
-    #                 CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
-    #             ),
-    #         },
-    #     )
-
     session = async_create_clientsession(hass)
     renowebapi = RenoWebData(
         API_KEY,
@@ -76,18 +65,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         session,
     )
     _LOGGER.debug("Connected to RenoWeb Platform")
-
-    # hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
-
-    # coordinator = DataUpdateCoordinator(
-    #     hass,
-    #     _LOGGER,
-    #     name=DOMAIN,
-    #     update_method=renoweb.fetch_waste_data,
-    #     update_interval=timedelta(
-    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-    #     ),
-    # )
 
     try:
         await renowebapi.fetch_waste_data()
@@ -175,66 +152,3 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry, INTEGRATION_PLATFORMS
     )
     return unload_ok
-
-    # Fetch initial data so we have data when entities subscribe
-
-
-#     await coordinator.async_refresh()
-#     hass.data[DOMAIN][entry.entry_id] = {
-#         "coordinator": coordinator,
-#         "renoweb": renoweb,
-#         "municipality_id": entry.data.get(CONF_MUNICIPALITY_ID),
-#         "address_id": entry.data.get(CONF_ADDRESS_ID),
-#     }
-
-#     await _async_get_or_create_renoweb_device_in_registry(
-#         hass, entry, entry.data.get(CONF_ADDRESS_ID)
-#     )
-
-#     for platform in INTEGRATION_PLATFORMS:
-#         hass.async_create_task(
-#             hass.config_entries.async_forward_entry_setup(entry, platform)
-#         )
-
-#     if not entry.update_listeners:
-#         entry.add_update_listener(async_update_options)
-
-#     return True
-
-
-# async def _async_get_or_create_renoweb_device_in_registry(
-#     hass: HomeAssistantType, entry: ConfigEntry, address_id
-# ) -> None:
-#     device_registry = dr.async_get(hass)
-#     device_key = f"{address_id}"
-#     device_registry.async_get_or_create(
-#         config_entry_id=entry.entry_id,
-#         connections={(dr.CONNECTION_NETWORK_MAC, device_key)},
-#         identifiers={(DOMAIN, device_key)},
-#         manufacturer=DEFAULT_BRAND,
-#         name=entry.data[CONF_ADDRESS],
-#         model=DEFAULT_BRAND,
-#         sw_version=DEFAULT_API_VERSION,
-#     )
-
-
-# async def async_update_options(hass: HomeAssistantType, entry: ConfigEntry):
-#     """Update options."""
-#     await hass.config_entries.async_reload(entry.entry_id)
-
-
-# async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
-#     """Unload Unifi Protect config entry."""
-#     unload_ok = all(
-#         await asyncio.gather(
-#             *[
-#                 hass.config_entries.async_forward_entry_unload(entry, component)
-#                 for component in INTEGRATION_PLATFORMS
-#             ]
-#         )
-#     )
-
-#     if unload_ok:
-#         hass.data[DOMAIN].pop(entry.entry_id)
-
-#     return unload_ok
