@@ -54,7 +54,7 @@ class RenoWebEntity(Entity):
             manufacturer=DEFAULT_BRAND,
             via_device=(DOMAIN, self.entry.unique_id),
             connections={(dr.CONNECTION_NETWORK_MAC, self.entry.unique_id)},
-            # configuration_url=f"https://tempestwx.com/station/{self.station_data.key}/grid",
+            configuration_url=f"https://www.borger.dk/Handlingsside?selfserviceId=cc9b93ae-81a8-4440-9e32-685f7a20c418&referringPageId=4d3a4fca-6adb-4c14-81d9-3b4ca89c1f91&type=DK",
         )
 
     @property
