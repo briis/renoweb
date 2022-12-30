@@ -1,7 +1,6 @@
 """Sensors for the RenoWeb Garbage Collection Service."""
 from __future__ import annotations
 
-import datetime
 import logging
 from dataclasses import dataclass
 
