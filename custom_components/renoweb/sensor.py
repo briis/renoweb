@@ -24,16 +24,10 @@ from .const import (
     ATTR_TYPE_ID,
     ATTR_VALID_DATA,
     DOMAIN,
+    RenoWebRequiredKeysMixin,
 )
 from .entity import RenoWebEntity
 from .models import RenoWebEntryData
-
-
-@dataclass
-class RenoWebRequiredKeysMixin:
-    """Mixin for required keys."""
-
-    always_add: bool
 
 
 @dataclass

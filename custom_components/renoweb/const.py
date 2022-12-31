@@ -1,4 +1,15 @@
 """Constants in renoweb component."""
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+
+@dataclass
+class RenoWebRequiredKeysMixin:
+    """Mixin for required keys."""
+
+    always_add: bool
+
 
 API_KEY_MUNICIPALITIES = "DDDD4A1D-DDD1-4436-DDDD-3F374DD683A1"
 API_KEY = "346B43B0-D1F0-4AFC-9EE8-C4AD1BFDC218"
@@ -33,4 +44,4 @@ DEFAULT_API_VERSION = "1.3"
 DEFAULT_SCAN_INTERVAL = 6
 DOMAIN = "renoweb"
 
-INTEGRATION_PLATFORMS = ["sensor"]
+INTEGRATION_PLATFORMS = ["sensor", "binary_sensor"]
