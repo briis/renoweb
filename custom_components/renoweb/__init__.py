@@ -7,6 +7,7 @@ from datetime import timedelta
 from aiohttp.client_exceptions import ServerDisconnectedError
 from pyrenoweb import (
     RenoWebData,
+    RenoWebDataSet,
     InvalidApiKey,
     RequestError,
     ResultError,
@@ -87,20 +88,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def async_update_data():
         """Obtain the latest data from RenoWeb."""
         try:
-            data = await renowebapi.fetch_waste_data()
+            data: RenoWebDataSet = await renowebapi.fetch_waste_data()
+            # _LOGGER.debug("Data: %s", data)
             return data
 
         except (ResultError, ServerDisconnectedError) as err:
             raise UpdateFailed(f"Error while retreiving data: {err}") from err
 
+    # coordinator = DataUpdateCoordinator(
+    #     hass,
+    #     _LOGGER,
+    #     name=DOMAIN,
+    #     update_method=async_update_data,
+    #     update_interval=timedelta(
+    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    #     ),
+    # )
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
         name=DOMAIN,
         update_method=async_update_data,
-        update_interval=timedelta(
-            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-        ),
+        update_interval=timedelta(seconds=30),
     )
     await coordinator.async_config_entry_first_refresh()
     if not coordinator.last_update_success:
@@ -108,7 +117,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = RenoWebEntryData(
         coordinator=coordinator,
-        renoweb=renowebapi,
+        renowebapi=renowebapi,
         municipality_id=entry.data.get(CONF_MUNICIPALITY_ID),
         address_id=entry.data.get(CONF_ADDRESS_ID),
     )

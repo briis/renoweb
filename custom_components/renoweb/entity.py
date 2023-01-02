@@ -9,6 +9,7 @@ from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from pyrenoweb import RenoWebDataSet, RenowWebDataItem
 
 from .const import DOMAIN, DEFAULT_ATTRIBUTION, DEFAULT_BRAND
 
@@ -22,7 +23,7 @@ class RenoWebEntity(Entity):
     # pylint: disable=too-many-arguments
     # Seven is reasonable in this case.
 
-    _attr_has_entity_name = True
+    # _attr_has_entity_name = True
 
     def __init__(
         self,
@@ -40,9 +41,19 @@ class RenoWebEntity(Entity):
             self.entity_description = description
 
         self.coordinator = coordinator
-        self.device_data = coordinator.data[
+        # _LOGGER.debug("DATA: %s", self.coordinator.data)
+        self.entity_item = (
             f"{self.entity_description.key}_{municipality_id}_{address_id}"
-        ]
+        )
+        # self.device_data: RenowWebDataItem = coordinator.data[
+        #     f"{self.entity_description.key}_{municipality_id}_{address_id}"
+        # ]
+        _LOGGER.debug("KEY: %s", self.entity_item)
+        _LOGGER.debug("DATA: %s", self.coordinator.data)
+        self.entity_item = "Restaffald-Madaffald_0265_85146"
+        self.device_data: RenowWebDataItem = getattr(
+            self.coordinator.data, self.entity_item
+        )
         self.renowebapi = renowebapi
         self.entry: ConfigEntry = entries
         self._address_id = address_id
@@ -56,8 +67,8 @@ class RenoWebEntity(Entity):
             manufacturer=DEFAULT_BRAND,
             via_device=(DOMAIN, self.entry.unique_id),
             connections={(dr.CONNECTION_NETWORK_MAC, self.entry.unique_id)},
-            configuration_url="https://www.borger.dk/Handlingsside?selfserviceId=cc9b93ae-81a8-4440-9e32-685f7a20c418&referringPageId=4d3a4fca-6adb-4c14-81d9-3b4ca89c1f91&type=DK",
         )
+        _LOGGER.debug("DATA: %s", self.coordinator.data)
 
     @property
     def extra_state_attributes(self):

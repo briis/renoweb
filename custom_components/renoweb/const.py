@@ -18,6 +18,7 @@ ATTR_DATE_LONG = "date_long"
 ATTR_DATE_SHORT = "date_short"
 ATTR_DAYS_TO = "days_to_next_pickup"
 ATTR_ICON_COLOR = "icon_color"
+ATTR_LAST_REFRESH = "last_refresh"
 ATTR_SCHEDULE = "schedule"
 ATTR_STATE_TEXT = "state_text"
 ATTR_TYPE_ID = "type_id"
@@ -44,4 +45,5 @@ DEFAULT_API_VERSION = "1.3"
 DEFAULT_SCAN_INTERVAL = 6
 DOMAIN = "renoweb"
 
-INTEGRATION_PLATFORMS = ["sensor", "binary_sensor"]
+# INTEGRATION_PLATFORMS = ["sensor", "binary_sensor"]
+INTEGRATION_PLATFORMS = ["sensor"]

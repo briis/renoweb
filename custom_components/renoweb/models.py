@@ -11,7 +11,7 @@ from pyrenoweb import RenoWeb
 class RenoWebEntryData:
     """Data for the weatherflow integration."""
 
-    renoweb: RenoWeb
+    renowebapi: RenoWeb
     coordinator: DataUpdateCoordinator
     municipality_id: str
     address_id: str

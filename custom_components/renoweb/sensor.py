@@ -19,6 +19,7 @@ from .const import (
     ATTR_DATE_SHORT,
     ATTR_DAYS_TO,
     ATTR_ICON_COLOR,
+    ATTR_LAST_REFRESH,
     ATTR_SCHEDULE,
     ATTR_STATE_TEXT,
     ATTR_TYPE_ID,
@@ -130,7 +131,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the RenoWeb sensor platform."""
     entry_data: RenoWebEntryData = hass.data[DOMAIN][entry.entry_id]
-    renowebapi = entry_data.renoweb
+    renowebapi = entry_data.renowebapi
     coordinator = entry_data.coordinator
     municipality_id = entry_data.municipality_id
     address_id = entry_data.address_id
@@ -178,10 +179,12 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
             address_id,
             entries,
         )
+        # _LOGGER.debug("DATA: %s", self.coordinator.data)
 
     @property
     def native_value(self) -> StateType:
         """Return the state of the sensor."""
+
         return self.device_data["date"]
 
     @property
@@ -198,6 +201,7 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
             ATTR_DATE_SHORT: self.device_data["date_short"],
             ATTR_DAYS_TO: self.device_data["days_to"],
             ATTR_ICON_COLOR: self.device_data["icon_color"],
+            ATTR_LAST_REFRESH: self.device_data["last_refresh"],
             ATTR_SCHEDULE: self.device_data["schedule"],
             ATTR_STATE_TEXT: self.device_data["template_text"],
             ATTR_TYPE_ID: self.device_data["id"],

@@ -89,7 +89,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the RenoWeb sensor platform."""
     entry_data: RenoWebEntryData = hass.data[DOMAIN][entry.entry_id]
-    renowebapi = entry_data.renoweb
+    renowebapi = entry_data.renowebapi
     coordinator = entry_data.coordinator
     municipality_id = entry_data.municipality_id
     address_id = entry_data.address_id
