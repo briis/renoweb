@@ -1,12 +1,19 @@
 """Shared Entity Definition for RenoWeb Integration."""
-import homeassistant.helpers.device_registry as dr
-from homeassistant.helpers.entity import Entity
+from __future__ import annotations
 
-from .const import DEFAULT_BRAND, DOMAIN
+from homeassistant.const import ATTR_ATTRIBUTION
+import homeassistant.helpers.device_registry as dr
+from homeassistant.helpers.entity import DeviceInfo, Entity
+
+from .const import DEFAULT_ATTRIBUTION, DEFAULT_BRAND, DOMAIN
 
 
 class RenoWebEntity(Entity):
     """Base class for RenoWeb Entities."""
+
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-arguments
+    # Eight is reasonable in this case.
 
     def __init__(
         self, coordinator, renoweb, entity_object, municipality_id, address_id
@@ -18,28 +25,12 @@ class RenoWebEntity(Entity):
         self.entity_object = entity_object
         self._address_id = address_id
         self._municipality_id = municipality_id
-        self._unique_id = f"{self.entity_object.replace(' ', '_')}_{self._address_id}"
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-
-        name = self._data.get("description").replace("-", " ")
-        name = name.replace("_", " ")
-        return f"{DOMAIN.capitalize()} {name}"
-
-    @property
-    def should_poll(self):
-        """Poll entity to update attributes."""
-        return False
-
-    @property
-    def device_info(self):
-        return {
-            "connections": {(dr.CONNECTION_NETWORK_MAC, self._address_id)},
-            "manufacturer": DEFAULT_BRAND,
-            "via_device": (DOMAIN, self._address_id),
-        }
+        self._attr_available = self.coordinator.last_update_success
+        self._attr_device_info = DeviceInfo(
+            manufacturer=DEFAULT_BRAND,
+            connections={(dr.CONNECTION_NETWORK_MAC, self._address_id)},
+            via_device=(DOMAIN, self._address_id),
+        )
 
     @property
     def _data(self):
@@ -47,14 +38,11 @@ class RenoWebEntity(Entity):
         return self.coordinator.data.get(self.entity_object)
 
     @property
-    def unique_id(self):
-        """Return a unique ID."""
-        return self._unique_id
-
-    @property
-    def available(self):
-        """Return if entity is available."""
-        return self.coordinator.last_update_success
+    def extra_state_attributes(self):
+        """Return common attributes"""
+        return {
+            ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
+        }
 
     async def async_added_to_hass(self):
         """When entity is added to hass."""

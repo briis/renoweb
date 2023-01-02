@@ -5,6 +5,7 @@ API_KEY = "346B43B0-D1F0-4AFC-9EE8-C4AD1BFDC218"
 
 ATTR_DATA_VALID = "data_valid"
 ATTR_DESCRIPTION = "description"
+ATTR_ICON_COLOR = "icon_color"
 ATTR_NEXT_PICKUP_TEXT = "next_pickup"
 ATTR_NEXT_PICKUP_DATE = "next_pickup_date"
 ATTR_SCHEDULE = "schedule"
@@ -28,4 +29,20 @@ DEFAULT_API_VERSION = "1.3"
 DEFAULT_SCAN_INTERVAL = 6
 DOMAIN = "renoweb"
 
-INTEGRATION_PLATFORMS = ["sensor"]
+INTEGRATION_PLATFORMS = ["sensor", "binary_sensor"]
+
+
+ICON_LIST = {
+    "Restaffald-Madaffald": "mdi:trash-can",
+    "Dagrenovation": "mdi:trash-can",
+    "Metal-Glas": "mdi:glass-fragile",
+    "PAPPI": "mdi:recycle",
+    "Farligt affald": "mdi:biohazard",
+    "Tekstiler": "mdi:hanger",
+    "Jern": "mdi:bucket",
+    "Papir": "mdi:file",
+    "Pap": "mdi:note",
+    "Plast Metal": "mdi:trash-can-outline",
+    "Storskrald": "mdi:table-furniture",
+    "Haveaffald": "mdi:leaf",
+}

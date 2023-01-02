@@ -1,32 +1,25 @@
 """Sensors for the RenoWeb Garbage Collection Service."""
+from __future__ import annotations
 
 import logging
 from datetime import datetime
-from homeassistant.helpers.entity import Entity
+
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.typing import HomeAssistantType
-import homeassistant.util.dt as dt
-from homeassistant.const import ATTR_ATTRIBUTION
-from pyrenoweb import (
-    TYPE_METAL_GLASS,
-    TYPE_PAPER,
-    TYPE_RESIDUAL,
-    TYPE_PLASTIC,
-    TYPE_STORSKRALD,
-    TYPE_HAVEAFFALD,
-    TYPE_GLASS,
-)
+from homeassistant.util import datetime as dt
+from homeassistant.core import HomeAssistant
+
 from .const import (
     ATTR_DATA_VALID,
     ATTR_DESCRIPTION,
     ATTR_FORMATTED_STATE_DK,
+    ATTR_ICON_COLOR,
     ATTR_NEXT_PICKUP_TEXT,
     ATTR_NEXT_PICKUP_DATE,
     ATTR_REFRESH_TIME,
     ATTR_SHORT_STATE_DK,
     ATTR_SCHEDULE,
     ATTR_STATE_TEXT,
-    DEFAULT_ATTRIBUTION,
     DOMAIN,
 )
 from .entity import RenoWebEntity
@@ -35,7 +28,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistantType, entry: ConfigEntry, async_add_entities
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
     """Set up the RenoWeb sensor platform."""
 
@@ -66,45 +59,34 @@ async def async_setup_entry(
     return True
 
 
-class RenoWebSensor(RenoWebEntity, Entity):
+class RenoWebSensor(RenoWebEntity, SensorEntity):
     """Implementation of a RenoWeb Sensor."""
+
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-arguments
+    # Eight is reasonable in this case.
 
     def __init__(self, coordinator, renoweb, sensor, municipality_id, address_id):
         """Initialize the sensor."""
         super().__init__(coordinator, renoweb, sensor, municipality_id, address_id)
 
+        _name = self._data.get("description").replace("-", " ")
+        _name = _name.replace("_", " ")
+        self._attr_name = f"{DOMAIN.capitalize()} {_name}"
+        self._attr_native_unit_of_measurement = "dage"
+        self._attr_unique_id = (
+            f"{self.entity_object.replace(' ', '_')}_{self._address_id}"
+        )
+
     @property
-    def state(self):
+    def native_value(self):
         """Return the state of the sensor."""
         return self._data.get("daysuntilpickup")
 
     @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement."""
-        return "dage"
-
-    @property
     def icon(self):
         """Icon to use in the frontend."""
-        _type = self.entity_object
-        _type_idx = _type.rfind("_")
-        garbage_type = _type[0:_type_idx].replace("_", " ")
-        if garbage_type in TYPE_RESIDUAL:
-            return "mdi:delete"
-        if garbage_type in TYPE_PAPER:
-            return "mdi:file"
-        if garbage_type in TYPE_METAL_GLASS:
-            return "mdi:bottle-wine"
-        if garbage_type in TYPE_GLASS:
-            return "mdi:bottle-wine"
-        if garbage_type in TYPE_HAVEAFFALD:
-            return "mdi:tree"
-        if garbage_type in TYPE_PLASTIC:
-            return "mdi:cup"
-        if garbage_type in TYPE_STORSKRALD:
-            return "mdi:truck"
-
-        return "mdi:delete"
+        return self._data.get("icon")
 
     @property
     def extra_state_attributes(self):
@@ -122,21 +104,20 @@ class RenoWebSensor(RenoWebEntity, Entity):
             str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
         )
         short_state_dk = day_name + format_dt
-        _state_text = f"Om {self.state} {day_str}"
         # Rewrite Attributes if no pickup schedule is supplied
         if self.state == -1:
             format_state = "Ikke Planlagt"
             short_state_dk = "Ikke Planlagt"
-            _state_text = "Ingen data"
         return {
-            ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
+            **super().extra_state_attributes,
             ATTR_DATA_VALID: self._data.get("data_valid"),
             ATTR_DESCRIPTION: self._data.get("description"),
+            ATTR_ICON_COLOR: self._data.get("icon_color"),
             ATTR_NEXT_PICKUP_TEXT: self._data.get("nextpickupdatetext"),
             ATTR_NEXT_PICKUP_DATE: self._data.get("nextpickupdate"),
             ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
             ATTR_SCHEDULE: self._data.get("schedule"),
             ATTR_FORMATTED_STATE_DK: format_state,
             ATTR_SHORT_STATE_DK: short_state_dk,
-            ATTR_STATE_TEXT: _state_text,
+            ATTR_STATE_TEXT: self._data.get("state_text"),
         }
