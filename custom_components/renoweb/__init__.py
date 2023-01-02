@@ -1,4 +1,5 @@
 """Support for the RenoWeb Garbage Collection Service."""
+from __future__ import annotations
 
 import asyncio
 import logging
@@ -17,8 +18,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 import homeassistant.helpers.device_registry as dr
-
-# from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
@@ -35,12 +34,6 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
-
-# async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-#     """Set up configured RenoWeb."""
-#     # We allow setup only through config flow type of config
-#     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -72,17 +65,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER,
         name=DOMAIN,
         update_method=renoweb.get_pickup_data,
-        update_interval=timedelta(seconds=30),
+        update_interval=timedelta(
+            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        ),
     )
-    # coordinator = DataUpdateCoordinator(
-    #     hass,
-    #     _LOGGER,
-    #     name=DOMAIN,
-    #     update_method=renoweb.get_pickup_data,
-    #     update_interval=timedelta(
-    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-    #     ),
-    # )
 
     try:
         await renoweb.get_pickup_data()
