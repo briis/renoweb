@@ -12,11 +12,13 @@ from pyrenoweb import (
     ResultError,
 )
 
+from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 import homeassistant.helpers.device_registry as dr
-from homeassistant.helpers.typing import ConfigType, HomeAssistantType
+
+# from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
@@ -35,13 +37,13 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
-    """Set up configured RenoWeb."""
-    # We allow setup only through config flow type of config
-    return True
+# async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+#     """Set up configured RenoWeb."""
+#     # We allow setup only through config flow type of config
+#     return True
 
 
-async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up RenoWeb platforms as config entry."""
 
     if not entry.options:
@@ -70,16 +72,23 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         _LOGGER,
         name=DOMAIN,
         update_method=renoweb.get_pickup_data,
-        update_interval=timedelta(
-            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-        ),
+        update_interval=timedelta(seconds=30),
     )
+    # coordinator = DataUpdateCoordinator(
+    #     hass,
+    #     _LOGGER,
+    #     name=DOMAIN,
+    #     update_method=renoweb.get_pickup_data,
+    #     update_interval=timedelta(
+    #         hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+    #     ),
+    # )
 
     try:
         await renoweb.get_pickup_data()
     except InvalidApiKey:
         _LOGGER.error(
-            "Could not Authorize against Weatherflow Server. Please reinstall integration."
+            "Could not Authorize against RenowWeb. API Keys might have changed."
         )
         return False
     except (ResultError, ServerDisconnectedError) as err:
@@ -114,7 +123,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
 
 
 async def _async_get_or_create_renoweb_device_in_registry(
-    hass: HomeAssistantType, entry: ConfigEntry, address_id
+    hass: HomeAssistant, entry: ConfigEntry, address_id
 ) -> None:
     device_registry = dr.async_get(hass)
     device_key = f"{address_id}"
@@ -129,13 +138,13 @@ async def _async_get_or_create_renoweb_device_in_registry(
     )
 
 
-async def async_update_options(hass: HomeAssistantType, entry: ConfigEntry):
+async def async_update_options(hass: HomeAssistant, entry: ConfigEntry):
     """Update options."""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
-    """Unload Unifi Protect config entry."""
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload RenowWeb config entry."""
     unload_ok = all(
         await asyncio.gather(
             *[

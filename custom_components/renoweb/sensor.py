@@ -17,6 +17,7 @@ from pyrenoweb import (
     TYPE_GLASS,
 )
 from .const import (
+    ATTR_DATA_VALID,
     ATTR_DESCRIPTION,
     ATTR_FORMATTED_STATE_DK,
     ATTR_NEXT_PICKUP_TEXT,
@@ -24,6 +25,7 @@ from .const import (
     ATTR_REFRESH_TIME,
     ATTR_SHORT_STATE_DK,
     ATTR_SCHEDULE,
+    ATTR_STATE_TEXT,
     DEFAULT_ATTRIBUTION,
     DOMAIN,
 )
@@ -120,12 +122,15 @@ class RenoWebSensor(RenoWebEntity, Entity):
             str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
         )
         short_state_dk = day_name + format_dt
+        _state_text = f"Om {self.state} {day_str}"
         # Rewrite Attributes if no pickup schedule is supplied
         if self.state == -1:
             format_state = "Ikke Planlagt"
             short_state_dk = "Ikke Planlagt"
+            _state_text = "Ingen data"
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
+            ATTR_DATA_VALID: self._data.get("data_valid"),
             ATTR_DESCRIPTION: self._data.get("description"),
             ATTR_NEXT_PICKUP_TEXT: self._data.get("nextpickupdatetext"),
             ATTR_NEXT_PICKUP_DATE: self._data.get("nextpickupdate"),
@@ -133,4 +138,5 @@ class RenoWebSensor(RenoWebEntity, Entity):
             ATTR_SCHEDULE: self._data.get("schedule"),
             ATTR_FORMATTED_STATE_DK: format_state,
             ATTR_SHORT_STATE_DK: short_state_dk,
+            ATTR_STATE_TEXT: _state_text,
         }
