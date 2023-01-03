@@ -70,9 +70,9 @@ class RenoWebSensor(RenoWebEntity, SensorEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, renoweb, sensor, municipality_id, address_id)
 
-        _name = self._data.get("description").replace("-", " ")
-        _name = _name.replace("_", " ")
-        self._attr_name = f"{DOMAIN.capitalize()} {_name}"
+        # _name = self._data.get("description").replace("-", " ")
+        # _name = _name.replace("_", " ")
+        self._attr_name = f"{DOMAIN.capitalize()} {self._data.get('name')}"
         self._attr_native_unit_of_measurement = "dage"
         self._attr_unique_id = (
             f"{self.entity_object.replace(' ', '_')}_{self._address_id}"
