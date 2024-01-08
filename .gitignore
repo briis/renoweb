@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 renoweb.code-workspace
 .DS_Store
+/config/*

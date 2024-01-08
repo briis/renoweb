@@ -39,7 +39,7 @@ class RenoWebEntity(Entity):
 
     @property
     def extra_state_attributes(self):
-        """Return common attributes"""
+        """Return common attributes."""
         return {
             ATTR_ATTRIBUTION: DEFAULT_ATTRIBUTION,
         }
