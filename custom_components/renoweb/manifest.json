@@ -1,15 +1,15 @@
 {
     "domain": "renoweb",
     "name": "RenoWeb Garbage Collection",
-    "config_flow": true,
-    "documentation": "https://github.com/briis/renoweb",
-    "issue_tracker": "https://github.com/briis/renoweb/issues",
-    "version": "1.0.1",
-    "requirements": [
-        "pyrenoweb==1.1.3"
-    ],
     "codeowners": [
         "@briis"
     ],
-    "iot_class": "cloud_polling"
+    "config_flow": true,
+    "documentation": "https://github.com/briis/renoweb",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/briis/renoweb/issues",
+    "requirements": [
+        "pyrenoweb==1.1.3"
+    ],
+    "version": "1.0.1"
 }
