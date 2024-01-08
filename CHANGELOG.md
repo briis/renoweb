@@ -1,5 +1,23 @@
 # Changelog for Renoweb Home Assistant Integration
 
+## Version 1.0.1
+
+**Date**: `2024-01-08`
+
+### Changes
+- Adding a workaround for addresses and houses numbers with multile houses. (Like 2, 2A, "b etc.). You can now type the house number as <HOUSE_NUMBER>,<ID> and it will get the correct address. In order to to get the ID you can use the [renoweb.py](https://github.com/briis/pyrenoweb) program and follow the instructions below:
+
+  To get the ID number you can execute the following commands using the renoweb.py program:
+
+  Get the Municipality ID: `python3 renoweb.py municipality` Pick your ID from the list
+  Get the Road ID: `python3 renoweb.py road <MUNICIPALITY_ID> <ZIP_CODE> <ROAD_NAME>`
+  Get the Address ID (This is the ID used above): `python3 renoweb.py address <MUNICIPALITY_ID><ROAD_ID> <HOUSE_NUMBER>``
+
+  Now pick the right ID from the last list of houses.
+
+Or if you can't get this to work, send me your address and I will find it for you 😀
+
+
 ## Version 1.0.0
 
 - `ADDED`: For each Bin there will now be a binary_sensor called `binary_sensor.BIN_NAME_valid`. This sensor will show if data for this specific bin is valid. I use it personally with the conditional card, to only show a card if the data is valid.
