@@ -66,35 +66,37 @@ As of October 2020, this is the list of supported Municipalities:
 ```txt
 MUNICIPALITY LIST
 **************************
-Allerød - ID: 201
-Brøndby - ID: 153
-Dragør - ID: 155
-Egedal - ID: 240
-Esbjerg - ID: 561
-Fredensborg - ID: 210
-Frederikssund - ID: 250
-Gentofte - ID: 157
-Gladsaxe - ID: 159
-Glostrup - ID: 161
-Greve - ID: 253
-Helsingør - ID: 217
-Herlev - ID: 163
-Hillerød - ID: 219
-Horsens - ID: 615 (Need to use the ID when adding)
-Hvidovre - ID: 167
-Høje-Taastrup - ID: 169
-Kerteminde - ID: 440 (Need to use the ID when adding)
-Køge - ID: 259
-Lejre - ID: 350
-Rebild - ID: 840
-Ringkøbing-Skjern - ID: 760
-Roskilde - ID: 265
-Rudersdal - ID: 230
-Rødovre - ID: 0175
-Solrød - ID: 269
-Stevns - ID: 336
-Svendborg - ID: 479
-Tårnby - ID: 185
-Vejen - ID: 575
-Aalborg - ID: 851
+1: Aalborg - ID: 851
+2: Allerød - ID: 201
+3: BOFA TEST - ID: 400
+4: Billund - ID: 530
+5: Brøndby - ID: 153
+6: Dragør - ID: 155
+7: Egedal - ID: 240
+8: Esbjerg - ID: 561
+9: Fredensborg - ID: 210
+10: Frederikssund - ID: 250
+11: Gentofte - ID: 157
+12: Gladsaxe - ID: 159
+13: Glostrup - ID: 161
+14: Greve - ID: 253
+15: Halsnæs - ID: 260
+16: Helsingør - ID: 217
+17: Herlev - ID: 163
+18: Hillerød - ID: 219
+19: Hvidovre - ID: 167
+20: Høje-Taastrup - ID: 169
+21: Køge - ID: 259
+22: Lejre - ID: 350
+23: Lyngby-Taarbæk - ID: 173
+24: Mariagerfjord - ID: 846
+25: Ringkøbing-Skjern - ID: 760
+26: Roskilde - ID: 265
+27: Rudersdal - ID: 230
+28: Rødovre Kommune - ID: 175
+29: Samsø - ID: 741
+30: Solrød - ID: 269
+31: Svendborg - ID: 479
+32: Tårnby - ID: 185
+33: Vejen - ID: 575
 ````
