@@ -83,20 +83,19 @@ MUNICIPALITY LIST
 15: Halsnæs - ID: 260
 16: Helsingør - ID: 217
 17: Herlev - ID: 163
-18: Hillerød - ID: 219
-19: Hvidovre - ID: 167
-20: Høje-Taastrup - ID: 169
-21: Køge - ID: 259
-22: Lejre - ID: 350
-23: Lyngby-Taarbæk - ID: 173
-24: Mariagerfjord - ID: 846
-25: Ringkøbing-Skjern - ID: 760
-26: Roskilde - ID: 265
-27: Rudersdal - ID: 230
-28: Rødovre Kommune - ID: 175
-29: Samsø - ID: 741
-30: Solrød - ID: 269
-31: Svendborg - ID: 479
-32: Tårnby - ID: 185
-33: Vejen - ID: 575
+18: Hvidovre - ID: 167
+19: Høje-Taastrup - ID: 169
+20: Køge - ID: 259
+21: Lejre - ID: 350
+22: Lyngby-Taarbæk - ID: 173
+23: Mariagerfjord - ID: 846
+24: Ringkøbing-Skjern - ID: 760
+25: Roskilde - ID: 265
+26: Rudersdal - ID: 230
+27: Rødovre Kommune - ID: 175
+28: Samsø - ID: 741
+29: Solrød - ID: 269
+30: Svendborg - ID: 479
+31: Tårnby - ID: 185
+32: Vejen - ID: 575
 ````
