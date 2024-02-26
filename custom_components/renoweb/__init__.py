@@ -1,146 +1,133 @@
 """Support for the RenoWeb Garbage Collection Service."""
 from __future__ import annotations
 
-import logging
 from datetime import timedelta
+import logging
+from types import MappingProxyType
+from typing import Any, Self
 
 from aiohttp.client_exceptions import ServerDisconnectedError
 from pyrenoweb import (
     GarbageCollection,
-    RenoWebAddressInfo,
-    RenoWebPickupData,
+    RenoWebCollectionData,
     RenowWebNotSupportedError,
     RenowWebNotValidAddressError,
 )
 
-from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import aiohttp_client
-import homeassistant.helpers.device_registry as dr
+from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError, ConfigEntryNotReady, Unauthorized
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
-    API_KEY,
-    CONF_ADDRESS,
     CONF_ADDRESS_ID,
-    CONF_MUNICIPALITY_ID,
+    CONF_MUNICIPALITY,
     CONF_UPDATE_INTERVAL,
-    DEFAULT_API_VERSION,
-    DEFAULT_BRAND,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
-    INTEGRATION_PLATFORMS,
 )
+
+PLATFORMS = [Platform.SENSOR]
 
 _LOGGER = logging.getLogger(__name__)
 
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Set up RenoWeb from a config entry."""
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up RenoWeb platforms as config entry."""
+    coordinator = RenoWebtDataUpdateCoordinator(hass, config_entry)
+    await coordinator.async_config_entry_first_refresh()
 
-    if not entry.options:
-        hass.config_entries.async_update_entry(
-            entry,
-            options={
-                CONF_UPDATE_INTERVAL: entry.data.get(
-                    CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL
-                ),
-            },
-        )
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN][config_entry.entry_id] = coordinator
 
-    session = aiohttp_client.async_get_clientsession(hass)
-    renoweb = RenoWebData(
-        API_KEY,
-        entry.data.get(CONF_MUNICIPALITY_ID),
-        entry.data.get(CONF_ADDRESS_ID),
-        session,
-    )
-    _LOGGER.debug("Connected to RenoWeb Platform")
+    config_entry.async_on_unload(config_entry.add_update_listener(async_update_entry))
 
-    try:
-        await renoweb.get_pickup_data()
-    except InvalidApiKey:
-        _LOGGER.error(
-            "Could not Authorize against RenowWeb. API Keys might have changed."
-        )
-        return False
-    except (ResultError, ServerDisconnectedError) as err:
-        _LOGGER.warning(str(err))
-        raise ConfigEntryNotReady from err
-    except RequestError as err:
-        _LOGGER.error("Error occured: %s", err)
-        raise ConfigEntryNotReady from err
-
-    if entry.unique_id is None:
-        hass.config_entries.async_update_entry(
-            entry, unique_id=entry.data.get(CONF_ADDRESS_ID)
-        )
-
-    async def async_update_data():
-        """Obtain the latest data from RenoWeb."""
-        try:
-            data = await renoweb.get_pickup_data()
-            return data
-        except (RequestError, ResultError) as err:
-            _LOGGER.error("Error occured: %s", err)
-            raise UpdateFailed(f"Error while retreiving data: {err}") from err
-
-    coordinator = DataUpdateCoordinator(
-        hass,
-        _LOGGER,
-        name=DOMAIN,
-        update_method=async_update_data,
-        update_interval=timedelta(
-            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-        ),
-    )
-    # Fetch initial data so we have data when entities subscribe
-    await coordinator.async_refresh()
-    if not coordinator.last_update_success:
-        raise ConfigEntryNotReady
-
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
-        "coordinator": coordinator,
-        "renoweb": renoweb,
-        "municipality_id": entry.data.get(CONF_MUNICIPALITY_ID),
-        "address_id": entry.data.get(CONF_ADDRESS_ID),
-    }
-
-    await _async_get_or_create_renoweb_device_in_registry(
-        hass, entry, entry.data.get(CONF_ADDRESS_ID)
-    )
-    await hass.config_entries.async_forward_entry_setups(entry, INTEGRATION_PLATFORMS)
-
-    entry.async_on_unload(entry.add_update_listener(_async_options_updated))
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
     return True
 
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
 
-async def _async_get_or_create_renoweb_device_in_registry(
-    hass: HomeAssistant, entry: ConfigEntry, address_id
-) -> None:
-    device_registry = dr.async_get(hass)
-    device_key = f"{address_id}"
-    device_registry.async_get_or_create(
-        config_entry_id=entry.entry_id,
-        connections={(dr.CONNECTION_NETWORK_MAC, device_key)},
-        identifiers={(DOMAIN, device_key)},
-        manufacturer=DEFAULT_BRAND,
-        name=entry.data[CONF_ADDRESS],
-        model=DEFAULT_BRAND,
-        sw_version=DEFAULT_API_VERSION,
-    )
-
-
-async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry):
-    """Update options."""
-    await hass.config_entries.async_reload(entry.entry_id)
-
-
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload WeatherFlow entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(
-        entry, INTEGRATION_PLATFORMS
+        config_entry, PLATFORMS
     )
+
+    hass.data[DOMAIN].pop(config_entry.entry_id)
+
     return unload_ok
+
+async def async_update_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    """Reload WeatherFlow Forecast component when options changed."""
+    await hass.config_entries.async_reload(config_entry.entry_id)
+
+class CannotConnect(HomeAssistantError):
+    """Unable to connect to the web site."""
+
+class RenoWebtDataUpdateCoordinator(DataUpdateCoordinator["RenoWebData"]):
+    """Class to manage fetching RenoWeb data."""
+
+    def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
+        """Initialize global WeatherFlow forecast data updater."""
+        self.renoweb = RenoWebData(
+            hass, config_entry.data)
+        self.renoweb.initialize_data()
+        self.hass = hass
+        self.config_entry = config_entry
+
+        update_interval = timedelta(hours=self.config_entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL))
+
+        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=update_interval)
+
+    async def _async_update_data(self) -> RenoWebData:
+        """Fetch data from WeatherFlow Forecast."""
+        try:
+            return await self.renoweb.fetch_data()
+        except Exception as err:
+            raise UpdateFailed(f"Update failed: {err}") from err
+
+
+class RenoWebData:
+    """Keep data for RenoWeb."""
+
+    def __init__(self, hass: HomeAssistant, config: MappingProxyType[str, Any]) -> None:
+        """Initialise renoweb entity data."""
+
+        self.hass = hass
+        self._config = config
+        self.renoweb_data: GarbageCollection
+        self.collection_data: RenoWebCollectionData = []
+
+    def initialize_data(self) -> bool:
+        """Establish connection to API."""
+        self.renoweb_data = GarbageCollection(
+                municipality=self._config[CONF_MUNICIPALITY],
+                session=async_get_clientsession(self.hass),
+        )
+
+        return True
+
+    async def fetch_data(self) -> Self:
+        """Fetch data from API."""
+
+        try:
+            resp: RenoWebCollectionData = await self.renoweb_data.get_data(address_id=self._config[CONF_ADDRESS_ID])
+        except RenowWebNotSupportedError as err:
+            _LOGGER.debug(err)
+            return False
+        except RenowWebNotValidAddressError as err:
+            _LOGGER.debug(err)
+            return False
+        except err as notreadyerror:
+            _LOGGER.debug(notreadyerror)
+            raise ConfigEntryNotReady from notreadyerror
+
+        if not resp:
+            raise CannotConnect()
+
+        self.collection_data = resp
+
+        return self

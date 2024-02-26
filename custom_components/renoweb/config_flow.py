@@ -16,7 +16,6 @@ from pyrenoweb import (
     RenoWebAddressInfo,
     RenowWebNotSupportedError,
     RenowWebNotValidAddressError,
-    RenoWebPickupData,
 )
 
 from .const import (
