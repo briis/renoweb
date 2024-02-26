@@ -10,13 +10,12 @@
         "step": {
             "user": {
                 "data": {
-                    "municipality": "Kommune (Navn eller ID)",
-                    "zipcode": "Post nummer",
+                    "municipality": "Vælg Kommune",
                     "road_name": "Vej navn",
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"
                 },
-                "description": "Hent data fra RenoWeb ind i Home Assistant.",
+                "description": "Hent data fra RenoWeb.",
                 "title": "RenoWeb Affaldsopsamling"
             }
         }
@@ -25,8 +24,7 @@
         "step": {
             "init": {
                 "data": {
-                    "municipality": "Kommune (Navn eller ID)",
-                    "zipcode": "Post nummer",
+                    "municipality": "Vælg Kommune",
                     "road_name": "Vej navn",
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"

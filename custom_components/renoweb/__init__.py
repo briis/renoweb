@@ -6,10 +6,11 @@ from datetime import timedelta
 
 from aiohttp.client_exceptions import ServerDisconnectedError
 from pyrenoweb import (
-    RenoWebData,
-    InvalidApiKey,
-    RequestError,
-    ResultError,
+    GarbageCollection,
+    RenoWebAddressInfo,
+    RenoWebPickupData,
+    RenowWebNotSupportedError,
+    RenowWebNotValidAddressError,
 )
 
 from homeassistant.core import HomeAssistant

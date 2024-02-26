@@ -10,6 +10,7 @@ on:
       - "**/info.md"
       - "**/CHANGELOG.md"
       - "**/CONTRIBUTING.md"
+      - "**/custom_components/renoweb/manifest.json"
     branches:
       - "main"
   pull_request:

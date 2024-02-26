@@ -23,7 +23,6 @@ from .const import (
     CONF_ADDRESS_ID,
     CONF_HOUSE_NUMBER,
     CONF_MUNICIPALITY,
-    CONF_MUNICIPALITY_ID,
     CONF_ROAD_NAME,
     CONF_UPDATE_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
@@ -82,10 +81,7 @@ class RenowebFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_MUNICIPALITY):selector.SelectSelector(
-                    selector.SelectSelectorConfig(options=MUNICIPALITIES_ARRAY,
-                                                  mode=selector.SelectSelectorMode.DROPDOWN),
-                    ),
+                    vol.Required(CONF_MUNICIPALITY):selector({"select": {"options": MUNICIPALITIES_ARRAY}}),
                     vol.Required(CONF_ROAD_NAME): str,
                     vol.Required(CONF_HOUSE_NUMBER): str,
                 }
