@@ -6,7 +6,6 @@ import logging
 from types import MappingProxyType
 from typing import Any, Self
 
-from aiohttp.client_exceptions import ServerDisconnectedError
 from pyrenoweb import (
     GarbageCollection,
     RenoWebCollectionData,
@@ -17,8 +16,7 @@ from pyrenoweb import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError, ConfigEntryNotReady, Unauthorized
-from homeassistant.helpers import device_registry as dr
+from homeassistant.exceptions import HomeAssistantError, ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -121,7 +119,7 @@ class RenoWebData:
         except RenowWebNotValidAddressError as err:
             _LOGGER.debug(err)
             return False
-        except err as notreadyerror:
+        except Exception as notreadyerror:
             _LOGGER.debug(notreadyerror)
             raise ConfigEntryNotReady from notreadyerror
 

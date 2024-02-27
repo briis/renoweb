@@ -4,11 +4,11 @@ from __future__ import annotations
 import logging
 
 from dataclasses import dataclass
+from datetime import datetime as dt
 from types import MappingProxyType
 from typing import Any
 
 from homeassistant.components.sensor import (
-    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
 )
@@ -21,13 +21,16 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
 )
-from homeassistant.util.dt import utc_from_timestamp
-from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from . import RenoWebtDataUpdateCoordinator
 from .const import (
+    ATTR_DATE,
+    ATTR_DATE_LONG,
     ATTR_DESCRIPTION,
+    ATTR_DURATION,
     CONF_ADDRESS_ID,
+    CONF_HOUSE_NUMBER,
+    CONF_ROAD_NAME,
     DEFAULT_API_VERSION,
     DEFAULT_ATTRIBUTION,
     DEFAULT_BRAND,
@@ -43,92 +46,97 @@ SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
     RenoWebSensorEntityDescription(
         key="restaffaldmadaffald",
         name="Rest- & madaffald",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
-        key="restmad",
-        name="Rest- & madaffald",
-        device_class=SensorDeviceClass.DATE,
+        key="glas",
+        name="Glas",
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="dagrenovation",
         name="Dagrenovations",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="metalglas",
         name="Metal & Glas",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
+        key="papirglas",
+        name="Papir, Pap & Glas",
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="pappi",
         name="Papir & Plast",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="farligtaffald",
         name="Farligt affald",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="farligtaffaldmiljoboks",
         name="Farligt affald & Miljøboks",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="flis",
         name="Flis",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
-        key="tekstiler",
-        name="Tekstiler",
-        device_class=SensorDeviceClass.DATE,
+        key="genbrug",
+        name="Genbrug",
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="jern",
         name="Jern",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="papir",
         name="Papir",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="papirmetal",
         name="Papir & Metal",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="pap",
         name="Pap",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="plastmetal",
         name="Plast & Metal",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="storskrald",
         name="Storskrald",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="storskraldogtekstilaffald",
         name="Storskrald & Tekstilaffald",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="haveaffald",
         name="Haveaffald",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
         key="next_pickup",
         name="Næste afhentning",
-        device_class=SensorDeviceClass.DATE,
+        native_unit_of_measurement="dage",
     ),
 )
 
@@ -153,6 +161,7 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
     """A RenoWeb sensor."""
 
     entity_description: RenoWebSensorEntityDescription
+    _attr_attribution = DEFAULT_ATTRIBUTION
     _attr_has_entity_name = True
 
     def __init__(
@@ -172,8 +181,8 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             manufacturer=DEFAULT_BRAND,
             model=DEFAULT_API_VERSION,
-            name=f"{DOMAIN.capitalize()} Sensors",
-            configuration_url=f"https://github.com/briis/renoweb",
+            name=f"{DOMAIN.capitalize()} {self._config.data[CONF_ROAD_NAME]} {self._config.data[CONF_HOUSE_NUMBER]}",
+            configuration_url="https://github.com/briis/renoweb",
         )
         self._attr_attribution = DEFAULT_ATTRIBUTION
         self._attr_unique_id = f"{config.data[CONF_ADDRESS_ID]} {description.key}"
@@ -188,10 +197,10 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
     def native_value(self) -> StateType:
         """Return state of the sensor."""
 
-        return (
-            getattr(self._coordinator.data.collection_data, self.entity_description.key)
-            if self._coordinator.data.collection_data else None
-        )
+        current_time = dt.today()
+        pickup_time: dt = getattr(self._coordinator.data.collection_data, self.entity_description.key) if self._coordinator.data.collection_data else None
+        if pickup_time:
+            return (pickup_time - current_time).days + 1
 
     @property
     def icon(self) -> str | None:
@@ -205,11 +214,34 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
     def extra_state_attributes(self) -> None:
         """Return non standard attributes."""
 
+        _date: dt = getattr(self._coordinator.data.collection_data, self.entity_description.key) if self._coordinator.data.collection_data else None
+        _current_date = dt.today()
+        _state = (_date - _current_date).days + 1
+        _day_number = _date.weekday()
+        _weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
+        _weekdays_full = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
+        _day_name = _weekdays[_day_number]
+        _day_name_long = _weekdays_full[_day_number]
+        if _state == 0:
+            _day_text = "I dag"
+        elif _state == 1:
+            _day_text = "I morgen"
+        else:
+            _day_text = f"Om {_state} dage"
+
         if self.entity_description.key == "next_pickup":
             return {
                 ATTR_DESCRIPTION: NAME_LIST.get(self._coordinator.data.collection_data.next_pickup_item),
+                ATTR_DATE: _date.date() if _date else None,
+                ATTR_DATE_LONG: f"{_day_name_long} {_date.strftime("d. %d-%m-%Y") if _date else None}" ,
+                ATTR_DURATION: _day_text,
             }
 
+        return {
+            ATTR_DATE: _date.date() if _date else None,
+            ATTR_DATE_LONG: f"{_day_name_long} {_date.strftime("d. %d-%m-%Y") if _date else None}" ,
+            ATTR_DURATION: _day_text,
+        }
 
     async def async_added_to_hass(self):
         """When entity is added to hass."""
