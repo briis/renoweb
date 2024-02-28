@@ -28,7 +28,7 @@ from .const import (
     DOMAIN,
 )
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.CALENDAR]
 
 _LOGGER = logging.getLogger(__name__)
 

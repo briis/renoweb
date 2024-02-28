@@ -31,7 +31,6 @@ from .const import (
     CONF_ADDRESS_ID,
     CONF_HOUSE_NUMBER,
     CONF_ROAD_NAME,
-    DEFAULT_API_VERSION,
     DEFAULT_ATTRIBUTION,
     DEFAULT_BRAND,
     DOMAIN,
@@ -180,11 +179,9 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
             identifiers={(DOMAIN, self._config.data[CONF_ADDRESS_ID])},
             entry_type=DeviceEntryType.SERVICE,
             manufacturer=DEFAULT_BRAND,
-            model=DEFAULT_API_VERSION,
             name=f"{DOMAIN.capitalize()} {self._config.data[CONF_ROAD_NAME]} {self._config.data[CONF_HOUSE_NUMBER]}",
             configuration_url="https://github.com/briis/renoweb",
         )
-        self._attr_attribution = DEFAULT_ATTRIBUTION
         self._attr_unique_id = f"{config.data[CONF_ADDRESS_ID]} {description.key}"
 
     @property
