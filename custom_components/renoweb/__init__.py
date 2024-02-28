@@ -8,7 +8,7 @@ from typing import Any, Self
 
 from pyrenoweb import (
     GarbageCollection,
-    RenoWebCollectionData,
+    PickupEvents,
     RenowWebNotSupportedError,
     RenowWebNotValidAddressError,
 )
@@ -97,7 +97,7 @@ class RenoWebData:
         self.hass = hass
         self._config = config
         self.renoweb_data: GarbageCollection
-        self.collection_data: RenoWebCollectionData = []
+        self.pickup_events: PickupEvents = []
 
     def initialize_data(self) -> bool:
         """Establish connection to API."""
@@ -112,7 +112,7 @@ class RenoWebData:
         """Fetch data from API."""
 
         try:
-            resp: RenoWebCollectionData = await self.renoweb_data.get_data(address_id=self._config[CONF_ADDRESS_ID])
+            resp: PickupEvents = await self.renoweb_data.get_pickup_data(address_id=self._config[CONF_ADDRESS_ID])
         except RenowWebNotSupportedError as err:
             _LOGGER.debug(err)
             return False
@@ -126,6 +126,6 @@ class RenoWebData:
         if not resp:
             raise CannotConnect()
 
-        self.collection_data = resp
+        self.pickup_events = resp
 
         return self

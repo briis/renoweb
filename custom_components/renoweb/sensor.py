@@ -14,6 +14,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.const import ATTR_DATE, ATTR_NAME, ATTR_ENTITY_PICTURE
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
@@ -24,7 +25,6 @@ from homeassistant.helpers.update_coordinator import (
 
 from . import RenoWebtDataUpdateCoordinator
 from .const import (
-    ATTR_DATE,
     ATTR_DATE_LONG,
     ATTR_DESCRIPTION,
     ATTR_DURATION,
@@ -35,7 +35,7 @@ from .const import (
     DEFAULT_BRAND,
     DOMAIN,
 )
-from pyrenoweb import ICON_LIST, NAME_LIST
+from pyrenoweb import ICON_LIST, PickupType
 
 @dataclass
 class RenoWebSensorEntityDescription(SensorEntityDescription):
@@ -145,13 +145,13 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
     """RenoWeb sensor platform."""
     coordinator: RenoWebtDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    if coordinator.data.collection_data == {}:
+    if coordinator.data.pickup_events == {}:
         return
 
 
     entities: list[RenoWebSensor[Any]] = [
         RenoWebSensor(coordinator, description, config_entry)
-        for description in SENSOR_TYPES if getattr(coordinator.data.collection_data, description.key) is not None
+        for description in SENSOR_TYPES if coordinator.data.pickup_events.get(description.key) is not None
     ]
 
     async_add_entities(entities, False)
@@ -174,6 +174,7 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
         self.entity_description = description
         self._config = config
         self._coordinator = coordinator
+        self._pickup_events: PickupType = coordinator.data.pickup_events.get(description.key) if coordinator.data.pickup_events else None
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._config.data[CONF_ADDRESS_ID])},
@@ -195,15 +196,13 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
         """Return state of the sensor."""
 
         current_time = dt.today()
-        pickup_time: dt = getattr(self._coordinator.data.collection_data, self.entity_description.key) if self._coordinator.data.collection_data else None
+        pickup_time: dt = self._pickup_events.date
         if pickup_time:
             return (pickup_time - current_time).days + 1
 
     @property
     def icon(self) -> str | None:
         """Return icon for sensor."""
-        if self.entity_description.key == "next_pickup":
-            return ICON_LIST.get(self._coordinator.data.collection_data.next_pickup_item)
 
         return ICON_LIST.get(self.entity_description.key)
 
@@ -211,7 +210,7 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
     def extra_state_attributes(self) -> None:
         """Return non standard attributes."""
 
-        _date: dt = getattr(self._coordinator.data.collection_data, self.entity_description.key) if self._coordinator.data.collection_data else None
+        _date: dt = self._pickup_events.date
         _current_date = dt.today()
         _state = (_date - _current_date).days + 1
         _day_number = _date.weekday()
@@ -226,18 +225,13 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
         else:
             _day_text = f"Om {_state} dage"
 
-        if self.entity_description.key == "next_pickup":
-            return {
-                ATTR_DESCRIPTION: NAME_LIST.get(self._coordinator.data.collection_data.next_pickup_item),
-                ATTR_DATE: _date.date() if _date else None,
-                ATTR_DATE_LONG: f"{_day_name_long} {_date.strftime("d. %d-%m-%Y") if _date else None}" ,
-                ATTR_DURATION: _day_text,
-            }
-
         return {
             ATTR_DATE: _date.date() if _date else None,
             ATTR_DATE_LONG: f"{_day_name_long} {_date.strftime("d. %d-%m-%Y") if _date else None}" ,
+            ATTR_DESCRIPTION: self._pickup_events.description,
             ATTR_DURATION: _day_text,
+            ATTR_ENTITY_PICTURE: self._pickup_events.entity_picture,
+            ATTR_NAME: self.entity_description.name,
         }
 
     async def async_added_to_hass(self):

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import datetime
-from dataclasses import asdict
 from datetime import datetime as dt, timedelta
 import logging
 from types import MappingProxyType
@@ -19,7 +18,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 from homeassistant.util import dt as dt_util
 
-from pyrenoweb import NAME_LIST
+from pyrenoweb import NAME_LIST, PickupType
 from . import RenoWebtDataUpdateCoordinator
 from .const import (
     CONF_ADDRESS_ID,
@@ -41,7 +40,7 @@ async def async_setup_entry(
 
     coordinator: RenoWebtDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    if coordinator.data.collection_data == {}:
+    if coordinator.data.pickup_events == {}:
         return
 
     async_add_entities([RenoWebCalendar(coordinator, config_entry)])
@@ -84,20 +83,23 @@ class RenoWebCalendar(CoordinatorEntity[DataUpdateCoordinator], CalendarEntity):
         """"Return calendar events within a datetime range."""
 
         events = []
-        for item in asdict(self._coordinator.data.collection_data):
-            if getattr(self._coordinator.data.collection_data, item) is None:
+        for item in self._coordinator.data.pickup_events:
+            if self._coordinator.data.pickup_events.get(item) is None:
                 continue
-            if item == 'next_pickup_item' or item == 'next_pickup':
+            if item == 'next_pickup':
                 continue
 
+            _pickup_events: PickupType = self._coordinator.data.pickup_events.get(item) if self._coordinator.data.pickup_events else None
+
             _summary = NAME_LIST.get(item)
-            _start: dt = getattr(self._coordinator.data.collection_data, item)
+            _start: dt = _pickup_events.date
             _end: dt = _start + timedelta(days=1)
 
             if _start and _end:
                 events.append(
                     CalendarEvent(
                         summary=_summary,
+                        description=_pickup_events.description,
                         start=dt_util.as_local(_start),
                         end=dt_util.as_local(_end),
                     )

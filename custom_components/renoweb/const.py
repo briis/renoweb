@@ -1,6 +1,5 @@
 """Constants in renoweb component."""
 
-ATTR_DATE = "date"
 ATTR_DATE_LONG = "date_long"
 ATTR_DURATION = "duration"
 ATTR_DESCRIPTION = "description"
