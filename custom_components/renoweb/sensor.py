@@ -28,6 +28,7 @@ from .const import (
     ATTR_DATE_LONG,
     ATTR_DESCRIPTION,
     ATTR_DURATION,
+    ATTR_LAST_UPDATE,
     CONF_ADDRESS_ID,
     CONF_HOUSE_NUMBER,
     CONF_ROAD_NAME,
@@ -189,6 +190,12 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
     def native_unit_of_measurement(self) -> str | None:
         """Return unit of sensor."""
 
+        current_time = dt.today()
+        pickup_time: dt = self._pickup_events.date
+        if pickup_time:
+            if ((pickup_time - current_time).days + 1) == 1:
+                return "dag"
+
         return super().native_unit_of_measurement
 
     @property
@@ -231,6 +238,7 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
             ATTR_DESCRIPTION: self._pickup_events.description,
             ATTR_DURATION: _day_text,
             ATTR_ENTITY_PICTURE: f"/local/renoweb/{self._pickup_events.entity_picture}",
+            ATTR_LAST_UPDATE: self._pickup_events.last_updated,
             ATTR_NAME: self.entity_description.name,
         }
 
