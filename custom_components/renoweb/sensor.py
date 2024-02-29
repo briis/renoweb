@@ -230,7 +230,7 @@ class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
             ATTR_DATE_LONG: f"{_day_name_long} {_date.strftime("d. %d-%m-%Y") if _date else None}" ,
             ATTR_DESCRIPTION: self._pickup_events.description,
             ATTR_DURATION: _day_text,
-            ATTR_ENTITY_PICTURE: self._pickup_events.entity_picture,
+            ATTR_ENTITY_PICTURE: f"/local/renoweb/{self._pickup_events.entity_picture}",
             ATTR_NAME: self.entity_description.name,
         }
 
