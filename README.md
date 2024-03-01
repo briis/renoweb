@@ -53,6 +53,13 @@ sensor.py
 translation (Directory with all files)
 ```
 
+## PRE-WORK
+
+This integration uses the `entity_picture` attribute, which means you can get nice looking Pictograms instead of Icons on your dashboard. If you want to use this feature, do the following:
+* download this [zip file]() and unxip the content. You should see a folder called `renoweb` with a bunch of `.svg` in it.
+* Open a file share to the `config` share on your Home Assistant entity, and go to the `www` directory. If this directory does not exist, just create it.
+* Now copy the folder `renoweb` from the Zip file to the `www` directory and that is it. This is where this integration will look for the Entity Pictures.
+
 ## CONFIGURATION
 
 In order to add this Integration to Home Assistant, go to *Settings* and *Integrations*. If you just installed RenoWeb, do a Hard Refresh in your browser, while on this page, to ensure the Integration shows up.
