@@ -24,6 +24,43 @@ As of writing this, I have found the following Municipalities to NOT work:
 
 A big thank you to @thomaspalmdk for finding the new API, and help test this new version.
 
+## UPGRADING FROM VERSION 1.X
+
+As of version 2.0, I am using a completely new API, and I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements. All this means that there is NO directupgrade path from V1.x to this Version and all your sensors will get new names and new Unique ID's, which again means you will have to change automations, scripts and dashboard after installing this version.
+
+If you never installed RenoWeb before go directly the Installation section.
+
+Here is the suggested *"Upgrade"* Procedure:
+
+#### Remove your current RenoWeb setup
+1. Go to *Settings* | *Devices & Services
+2. Click on *RenoWeb Garbage Collection*
+3. Click on the 3 dots to the right of each address you installed, and click *Delete*
+* **SKIP the next 3 steps, while the system is in Beta**
+4. Now go to *HACS* and then click on *Integrations*
+5. Find *RenoWeb Garbage Collection* and click on it.
+6. You should now see the Integration description. In the upper right corder, click on the 3 dots, and then *Remove*
+7. All is now removed, and it is recommended to restart Home Assistant
+
+#### Add RenoWeb V2.0 to your system
+* **This only applies while we are running the Beta, after that just you the normal Installation/Upgrade procedures**
+* Go to *HACS* and then click on *Integrations*
+* Find *RenoWeb Garbage Collection* and click on it.
+* In the upper right corner, click on the 3 dots, and select *Redownload*
+* Now **very important**, toggle the switch, *Show beta version* to On.
+* The system will think a bit, and should then contain a list with Beta and Released version.
+* Find the latest Beta version and click *Download*
+* Once completed, restart Home Assistant
+* When the system comes back, follow instructions in the [CONFIGURATION](#CONFIGURATION) section
+
+
+## PRE-WORK
+
+This integration uses the `entity_picture` attribute, which means you can get nice looking Pictograms instead of Icons on your dashboard. If you want to use this feature, do the following:
+* download the file `renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. You should see a folder called `renoweb` with a bunch of `.svg` in it.
+* Open a file share to the `config` share on your Home Assistant entity, and go to the `www` directory. If this directory does not exist, just create it.
+* Now copy the folder `renoweb` from the Zip file to the `www` directory and that is it. This is where this integration will look for the Entity Pictures.
+
 ## INSTALLATION
 
 ### HACS Installation
@@ -53,13 +90,6 @@ sensor.py
 translation (Directory with all files)
 ```
 
-## PRE-WORK
-
-This integration uses the `entity_picture` attribute, which means you can get nice looking Pictograms instead of Icons on your dashboard. If you want to use this feature, do the following:
-* download the file `renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. You should see a folder called `renoweb` with a bunch of `.svg` in it.
-* Open a file share to the `config` share on your Home Assistant entity, and go to the `www` directory. If this directory does not exist, just create it.
-* Now copy the folder `renoweb` from the Zip file to the `www` directory and that is it. This is where this integration will look for the Entity Pictures.
-
 ## CONFIGURATION
 
 In order to add this Integration to Home Assistant, go to *Settings* and *Integrations*. If you just installed RenoWeb, do a Hard Refresh in your browser, while on this page, to ensure the Integration shows up.
@@ -70,48 +100,5 @@ Now click the **+** button in the lower right corner, and then search for *Renow
 
 Now fill out the form and click the *SEND* button. The Integration should now find all data for your address and add the available sensors to Home Assistant.
 
-**Please note** that under Municipality you can either type the name of the Municipality or if you allready have the ID number, you can type in this instead of the name.
 
-## SUPPORTED MUNICIPALITIES
-It is hard to tell exactly what Municipalities are supported. When pulling them from the API, the below are the ones found, but reality has shown that more Munipalities use the same API. So try and type in your Municipality, and see if it works, even though it is not on the list below.
 
-If you **can't get your municipality to work** with this integration, I encourage you to try another approach developed by @kentora called [RenoWeb Legacy](https://github.com/kentora/renoweb-legacy). This uses a different part of the RenoWeb API, and might work for some other Municipalities.
-
-As of October 2020, this is the list of supported Municipalities:
-
-```txt
-MUNICIPALITY LIST
-**************************
-1: Aalborg - ID: 851
-2: Allerød - ID: 201
-3: BOFA TEST - ID: 400
-4: Billund - ID: 530
-5: Brøndby - ID: 153
-6: Dragør - ID: 155
-7: Egedal - ID: 240
-8: Esbjerg - ID: 561
-9: Fredensborg - ID: 210
-10: Frederikssund - ID: 250
-11: Gentofte - ID: 157
-12: Gladsaxe - ID: 159
-13: Glostrup - ID: 161
-14: Greve - ID: 253
-15: Halsnæs - ID: 260
-16: Helsingør - ID: 217
-17: Herlev - ID: 163
-18: Hvidovre - ID: 167
-19: Høje-Taastrup - ID: 169
-20: Køge - ID: 259
-21: Lejre - ID: 350
-22: Lyngby-Taarbæk - ID: 173
-23: Mariagerfjord - ID: 846
-24: Ringkøbing-Skjern - ID: 760
-25: Roskilde - ID: 265
-26: Rudersdal - ID: 230
-27: Rødovre Kommune - ID: 175
-28: Samsø - ID: 741
-29: Solrød - ID: 269
-30: Svendborg - ID: 479
-31: Tårnby - ID: 185
-32: Vejen - ID: 575
-````
