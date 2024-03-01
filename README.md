@@ -1,15 +1,22 @@
-# // renoweb
+# Garbage Collection DK
 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/briis/renoweb?include_prereleases&style=flat-square)
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![License][license-shield]](LICENSE)
+[![hacs][hacsbadge]][hacs]
+![Project Maintenance][maintenance-shield]
+[![Community Forum][forum-shield]][forum]
+
 
 The renoweb integration adds support for retreiving Garbage Collection data from Municipalities around Denmark. The integration uses the same lookup API's as the Municipalities do, so if your Municipality uses RenoWeb as their data API, there is very good chance that this integration will work for you.
 
-There is currently support for the following device types within Home Assistant:
+#### This integration will set up the following platforms.
 
-* Calendar
-* Sensor
+Platform | Description
+-- | --
+`sensor` | A Home Assistant `sensor` entity, with all available sensor from the API. State value will be the days until next pick-up
+`calendar` | An entry will be made in to a local Home Assistant `calendar`. There will be a full-day event every time there is a pick-up, describing what is collected.
 
-The *state* of the sensor, will be number of days until next pick-up, and the next pickup dates will be shown in a local calendar
 
 ## MUNICIPALTIES NOT SUPPORTED
 Unfortunately not all Municipalities use the API I use here, and therefore they are NOT supported, and CANNOT be added to the list.
@@ -19,6 +26,11 @@ As of writing this, I have found the following Municipalities to NOT work:
 * København
 * Århus
 
+**PLEASE RAISE AN ISSUE IF YOU CAN SELECT YOUR MUNICIPALITY BUT THE ADDRESS DOES NOT WORK**
+
+I have not testet all municipalities that are still on the list, and I cannot guarantee that all will work. If you find that your Municipality and address does not work, please create an issue here on Github. I can then investigate if it is correctable, or I need to add the Municpality to the above list.
+
+The same applies if you can get data, but are missing one or more items that should have been on the Pick-Up list.
 
 ## CREDITS
 
@@ -36,11 +48,7 @@ Here is the suggested *"Upgrade"* Procedure:
 1. Go to *Settings* | *Devices & Services
 2. Click on *RenoWeb Garbage Collection*
 3. Click on the 3 dots to the right of each address you installed, and click *Delete*
-* **SKIP the next 3 steps, while the system is in Beta**
-4. Now go to *HACS* and then click on *Integrations*
-5. Find *RenoWeb Garbage Collection* and click on it.
-6. You should now see the Integration description. In the upper right corder, click on the 3 dots, and then *Remove*
-7. All is now removed, and it is recommended to restart Home Assistant
+
 
 #### Add RenoWeb V2.0 to your system
 * **This only applies while we are running the Beta, after that just you the normal Installation/Upgrade procedures**
@@ -71,34 +79,52 @@ This Integration is not part of the default HACS store, but you can add it as a 
 2. Click the three vertical dots in the upper right corner, and select *Custom repositories*
 3. Add `https://github.com/briis/renoweb` and select *Integration* as Category, and then click *Add*
 
-You should now be able to find this Integration in HACS. (Most times you need to do a Hard Refresh of the browser before it shows up)
+You should now be able to find this Integration in HACS. After the installation of the files, you must restart Home Assistant, or else you will not be able to add RenoWeb from the Integration Page.
+
+If you are not familiar with HACS, or haven't installed it, I would recommend to [look through the HACS documentation](https://hacs.xyz/), before continuing. Even though you can install the Integration manually, I would recommend using HACS, as you would always be reminded when a new release is published.
 
 ### Manual Installation
 
-To add *renowweb* to your installation, create this folder structure in your /config directory:
-
-`custom_components/renoweb`.
-Then, drop the following files into that folder:
-
-```yaml
-__init__.py
-calendar.py
-config_flow.py
-const.py
-manifest.json
-sensor.py
-translation (Directory with all files)
-```
+1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
+2. If you do not have a `custom_components` directory (folder) there, you need to create it.
+3. In the `custom_components` directory (folder) create a new folder called `renoweb`.
+4. Download _all_ the files from the `custom_components/renoweb/` directory (folder) in this repository.
+5. Place the files you downloaded in the new directory (folder) you created.
+6. Restart Home Assistant
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "WRenoWeb"
 
 ## CONFIGURATION
 
-In order to add this Integration to Home Assistant, go to *Settings* and *Integrations*. If you just installed RenoWeb, do a Hard Refresh in your browser, while on this page, to ensure the Integration shows up.
+To add RenoWeb to your installation, do the following:
 
-Now click the **+** button in the lower right corner, and then search for *Renoweb*. That should bring up the below screen:
+- Go to Configuration and Integrations
+- Click the + ADD INTEGRATION button in the lower right corner.
+- Search for *RenoWeb** and click the integration.
+- When loaded, there will be a configuration box, where you must enter:
 
-![](https://github.com/briis/renoweb/blob/main/images/documentation/config_flow.png)
+  | Parameter | Required | Default Value | Description |
+  | --------- | -------- | ------------- | ----------- |
+  | `Municipality` | Yes | None | Select your Municipality from the Dropdown list. You can press the first letter of your municipality to quickly scroll down. |
+  | `Road name` | Yes | None | Type the name of the road you want to get collection data for. Without house number. |
+  | `House Number` | Yes | None | The house number of the address. Also accepts letters. |
 
-Now fill out the form and click the *SEND* button. The Integration should now find all data for your address and add the available sensors to Home Assistant.
+- Click on SUBMIT to save your data. If all goes well you should now have a two new entities under the RenoWeb integration
+
+
+You can configure more than 1 instance of the Integration by using a different Address.
 
 
 
+
+***
+
+[commits-shield]: https://img.shields.io/github/commit-activity/y/briis/renoweb.svg?style=flat-square
+[commits]: https://github.com/briis/renoweb/commits/main
+[hacs]: https://github.com/hacs/integration
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square
+[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=flat-square
+[forum]: https://community.home-assistant.io/
+[license-shield]: https://img.shields.io/github/license/briis/renoweb.svg?style=flat-square
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Bjarne%20Riis%20%40briis-blue.svg?style=flat-square
+[releases-shield]: https://img.shields.io/github/release/briis/renoweb.svg?include_prereleases&style=flat-square&style=flat-square
+[releases]: https://github.com/briis/renoweb/releases
