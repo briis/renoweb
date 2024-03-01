@@ -8,7 +8,7 @@
 [![Community Forum][forum-shield]][forum]
 
 
-The renoweb integration adds support for retreiving Garbage Collection data from Municipalities around Denmark. The integration uses the same lookup API's as the Municipalities do, so if your Municipality uses RenoWeb as their data API, there is very good chance that this integration will work for you.
+The renoweb integration adds support for retreiving Garbage Collection data from Municipalities around Denmark. The integration uses the same lookup API's as the Municipalities do, so if your Municipality uses Renoweb as their data API, there is very good chance that this integration will work for you.
 
 #### This integration will set up the following platforms.
 
@@ -40,20 +40,20 @@ A big thank you to @thomaspalmdk for finding the new API, and help test this new
 
 As of version 2.0, I am using a completely new API, and I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements. All this means that there is NO directupgrade path from V1.x to this Version and all your sensors will get new names and new Unique ID's, which again means you will have to change automations, scripts and dashboard after installing this version.
 
-If you never installed RenoWeb before go directly the Installation section.
+If you never installed Renoweb before go directly the Installation section.
 
 Here is the suggested *"Upgrade"* Procedure:
 
-#### Remove your current RenoWeb setup
+#### Remove your current Renoweb setup
 1. Go to *Settings* | *Devices & Services
-2. Click on *RenoWeb Garbage Collection*
+2. Click on *Renoweb Garbage Collection*
 3. Click on the 3 dots to the right of each address you installed, and click *Delete*
 
 
-#### Add RenoWeb V2.0 to your system
+#### Add Renoweb V2.0 to your system
 * **This only applies while we are running the Beta, after that just you the normal Installation/Upgrade procedures**
 * Go to *HACS* and then click on *Integrations*
-* Find *RenoWeb Garbage Collection* and click on it.
+* Find *Renoweb Garbage Collection* and click on it.
 * In the upper right corner, click on the 3 dots, and select *Redownload*
 * Now **very important**, toggle the switch, *Show beta version* to On.
 * The system will think a bit, and should then contain a list with Beta and Released version.
@@ -79,7 +79,7 @@ This Integration is not part of the default HACS store, but you can add it as a 
 2. Click the three vertical dots in the upper right corner, and select *Custom repositories*
 3. Add `https://github.com/briis/renoweb` and select *Integration* as Category, and then click *Add*
 
-You should now be able to find this Integration in HACS. After the installation of the files, you must restart Home Assistant, or else you will not be able to add RenoWeb from the Integration Page.
+You should now be able to find this Integration in HACS. After the installation of the files, you must restart Home Assistant, or else you will not be able to add Renoweb from the Integration Page.
 
 If you are not familiar with HACS, or haven't installed it, I would recommend to [look through the HACS documentation](https://hacs.xyz/), before continuing. Even though you can install the Integration manually, I would recommend using HACS, as you would always be reminded when a new release is published.
 
@@ -91,15 +91,15 @@ If you are not familiar with HACS, or haven't installed it, I would recommend to
 4. Download _all_ the files from the `custom_components/renoweb/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "WRenoWeb"
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Renoweb"
 
 ## CONFIGURATION
 
-To add RenoWeb to your installation, do the following:
+To add Renoweb to your installation, do the following:
 
 - Go to Configuration and Integrations
 - Click the + ADD INTEGRATION button in the lower right corner.
-- Search for *RenoWeb** and click the integration.
+- Search for *Renoweb** and click the integration.
 - When loaded, there will be a configuration box, where you must enter:
 
   | Parameter | Required | Default Value | Description |
@@ -108,7 +108,7 @@ To add RenoWeb to your installation, do the following:
   | `Road name` | Yes | None | Type the name of the road you want to get collection data for. Without house number. |
   | `House Number` | Yes | None | The house number of the address. Also accepts letters. |
 
-- Click on SUBMIT to save your data. If all goes well you should now have a two new entities under the RenoWeb integration
+- Click on SUBMIT to save your data. If all goes well you should now have a two new entities under the Renoweb integration
 
 
 You can configure more than 1 instance of the Integration by using a different Address.

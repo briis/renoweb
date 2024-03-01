@@ -11,7 +11,7 @@
   I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements.
 
   The major changes are:
-  - I now use a new API. The V1 API was based on a RenoWeb API that is being phased ot, and over the last few months I have seen more and more municipalities disappearing from the supported municipalities. The new API is the same most Municipalities use, when you go to their official web page and search for your address and then get Pickup Schedules.
+  - I now use a new API. The V1 API was based on a Renoweb API that is being phased ot, and over the last few months I have seen more and more municipalities disappearing from the supported municipalities. The new API is the same most Municipalities use, when you go to their official web page and search for your address and then get Pickup Schedules.
   - The `Sensors` are new, and not named the same way as the V1 sensors. Thus there is no upgrade path. With each sensor I now also iclude the official Pictograms as Entity Pictures, which you can use in your dashboard. **Note**: This image files must be installed manually - please see the README file).
   - There is a new local `Calendar` entity created, which has a full-day event every time there is a Pick-up. The event will contain a Description and what content is being picked up.
   - The `Binary Sensors` have not been created. If anyone uses these, raise an issue on Github.
@@ -22,18 +22,18 @@
 
 Here is the suggested *"Upgrade"* Procedure:
 
-##### Remove your current RenoWeb setup
+##### Remove your current Renoweb setup
 1. Go to *Settings* | *Devices & Services
-2. Click on *RenoWeb Garbage Collection*
+2. Click on *Renoweb Garbage Collection*
 3. Click on the 3 dots to the right of each address you installed, and click *Delete*
 
 
-##### Add RenoWeb V2.0 to your system
+##### Add Renoweb V2.0 to your system
 **This only applies while we are running the Beta, after that just you the normal Installation/
 Upgrade procedures**
 
 * Go to *HACS* and then click on *Integrations*
-* Find *RenoWeb Garbage Collection* and click on it.
+* Find *Renoweb Garbage Collection* and click on it.
 * In the upper right corner, click on the 3 dots, and select *Redownload*
 * Now, **very important**, toggle the switch, *Show beta version* to On.
 * The system will think a bit, and should then contain a list with Beta and Released version.
@@ -42,7 +42,7 @@ Upgrade procedures**
 * When the system comes back:
   * Go to Configuration and Integrations
   * Click the + ADD INTEGRATION button in the lower right corner.
-  * Search for *RenoWeb** and click the integration.
+  * Search for *Renoweb** and click the integration.
 
 -------------
 
