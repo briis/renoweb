@@ -2,17 +2,27 @@
 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/briis/renoweb?include_prereleases&style=flat-square)
 
-The renoweb integration adds support for collecting Garbage Collection data from RenoWeb. This is a data provider for several Municipalities in Denmark.
+The renoweb integration adds support for retreiving Garbage Collection data from Municipalities around Denmark. The integration uses the same lookup API's as the Municipalities do, so if your Municipality uses RenoWeb as their data API, there is very good chance that this integration will work for you.
 
 There is currently support for the following device types within Home Assistant:
 
+* Calendar
 * Sensor
 
-The *state* of the sensor, will be number of days until next pick-up
+The *state* of the sensor, will be number of days until next pick-up, and the next pickup dates will be shown in a local calendar
+
+## MUNICIPALTIES NOT SUPPORTED
+Unfortunately not all Municipalities use the API I use here, and therefore they are NOT supported, and CANNOT be added to the list.
+
+As of writing this, I have found the following Municipalities to NOT work:
+* Fåborg-Midtfyn
+* København
+* Århus
+
 
 ## CREDITS
 
-This module is solely based on the work done by **Jacob Henriksen**, **@esbenr** and **@AngelFreak**, who did all the work in sniffing out the API and Keys. I took their work and just converted it in to a Home Assistant Integration.
+A big thank you to @thomaspalmdk for finding the new API, and help test this new version.
 
 ## INSTALLATION
 
@@ -35,12 +45,11 @@ Then, drop the following files into that folder:
 
 ```yaml
 __init__.py
-manifest.json
-sensor.py
-entity.py
+calendar.py
 config_flow.py
 const.py
-string.json
+manifest.json
+sensor.py
 translation (Directory with all files)
 ```
 
