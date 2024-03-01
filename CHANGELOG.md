@@ -1,57 +1,107 @@
 # Changelog for Renoweb Home Assistant Integration
 
-## Version 1.0.1
+  ## Version 2.0.0-Beta-1
 
-**Date**: `2024-01-08`
+  **Date**: `2024-03-02`
 
-### Changes
-- Adding a workaround for addresses and houses numbers with multile houses. (Like 2, 2A, "b etc.). You can now type the house number as <HOUSE_NUMBER>,<ID> and it will get the correct address. In order to to get the ID you can use the [renoweb.py](https://github.com/briis/pyrenoweb) program and follow the instructions below:
+  ### Changes
 
-  To get the ID number you can execute the following commands using the renoweb.py program:
+  This is a complete rewrite of the V1.x Integration. There is no code left from the previous version, and as a result of that, there is NO DIRECT UPGRADE from version 1.x to V2.0.
 
-  Get the Municipality ID: `python3 renoweb.py municipality` Pick your ID from the list
-  Get the Road ID: `python3 renoweb.py road <MUNICIPALITY_ID> <ZIP_CODE> <ROAD_NAME>`
-  Get the Address ID (This is the ID used above): `python3 renoweb.py address <MUNICIPALITY_ID><ROAD_ID> <HOUSE_NUMBER>``
+  I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements.
 
-  Now pick the right ID from the last list of houses.
+  The major changes are:
+  - I now use a new API. The V1 API was based on a RenoWeb API that is being phased ot, and over the last few months I have seen more and more municipalities disappearing from the supported municipalities. The new API is the same most Municipalities use, when you go to their official web page and search for your address and then get Pickup Schedules.
+  - The `Sensors` are new, and not named the same way as the V1 sensors. Thus there is no upgrade path. With each sensor I now also iclude the official Pictograms as Entity Pictures, which you can use in your dashboard. **Note**: This image files must be installed manually - please see the README file).
+  - There is a new local `Calendar` entity created, which has a full-day event every time there is a Pick-up. The event will contain a Description and what content is being picked up.
+  - The `Binary Sensors` have not been created. If anyone uses these, raise an issue on Github.
+  - **BREAKING**: As statet above all sensors will get new names and new unique ID's so you will have to change all your automations, scripts and dashboards to use the new sensor names. I am sorry for that, but it could not be avoided.
 
-Or if you can't get this to work, send me your address and I will find it for you 😀
+
+#### UPGRADING FROM VERSION 1.X
+
+Here is the suggested *"Upgrade"* Procedure:
+
+##### Remove your current RenoWeb setup
+1. Go to *Settings* | *Devices & Services
+2. Click on *RenoWeb Garbage Collection*
+3. Click on the 3 dots to the right of each address you installed, and click *Delete*
 
 
-## Version 1.0.0
+##### Add RenoWeb V2.0 to your system
+**This only applies while we are running the Beta, after that just you the normal Installation/
+Upgrade procedures**
 
-- `ADDED`: For each Bin there will now be a binary_sensor called `binary_sensor.BIN_NAME_valid`. This sensor will show if data for this specific bin is valid. I use it personally with the conditional card, to only show a card if the data is valid.
-- `CHANGED`: I have now rewritten some of the function to try and create more automatic recovery, should the sensor not get data on start on after an update. It will keep trying for a while, but if it takes too long it will give up, and not try again before the next timed update (Which per default is 6 hours). I did this a while ago and I do believe this introduces a **Breaking Change** as the sensors will get new names. (I honestly can't remember if this was the case) If this happens, just delete the Integration and re-add it, and then update you cards and automations with the new names. Sorry for any inconvinience.
+* Go to *HACS* and then click on *Integrations*
+* Find *RenoWeb Garbage Collection* and click on it.
+* In the upper right corner, click on the 3 dots, and select *Redownload*
+* Now, **very important**, toggle the switch, *Show beta version* to On.
+* The system will think a bit, and should then contain a list with Beta and Released version.
+* Find the latest Beta version and click *Download*
+* Once completed, restart Home Assistant
+* When the system comes back:
+  * Go to Configuration and Integrations
+  * Click the + ADD INTEGRATION button in the lower right corner.
+  * Search for *RenoWeb** and click the integration.
 
-## Version 0.1.16
+-------------
 
-- `FIXED`: Ensuring all Unit of Measurrement are always the same (dage). This ensures that the sensors can be used with Helpers like the Min/Max helper.
-- `ADDED`: Added new sensor called `sensor.renoweb_days_until_next_pickup`, which shows the number of days until the next pick-up of any of the containers.
+<details>
+  <summary><b>VERSION 1.x Changes </b></summary>
 
-## Version 0.1.15
+  ## Version 1.0.1
 
-- `FIXED`: Fixing deprecated `async_get_registry` that might start showing up in HA 2022.6
+  **Date**: `2024-01-08`
 
-## Version 0.1.14
+  ### Changes
+  - Adding a workaround for addresses and houses numbers with multile houses. (Like 2, 2A, "b etc.). You can now type the house number as <HOUSE_NUMBER>,<ID> and it will get the correct address. In order to to get the ID you can use the [renoweb.py](https://github.com/briis/pyrenoweb) program and follow the instructions below:
 
-* `FIXED`: Fixes issue #10, with a deprecation warning about `device_state_attributes`.
+    To get the ID number you can execute the following commands using the renoweb.py program:
 
-## Version 0.1.13
+    Get the Municipality ID: `python3 renoweb.py municipality` Pick your ID from the list
+    Get the Road ID: `python3 renoweb.py road <MUNICIPALITY_ID> <ZIP_CODE> <ROAD_NAME>`
+    Get the Address ID (This is the ID used above): `python3 renoweb.py address <MUNICIPALITY_ID><ROAD_ID> <HOUSE_NUMBER>``
 
-* `FIXED`: **BREAKING CHANGE** Det viser sig at i nogle kommuner vil der forekomme afhentninger der hedder det samme - eksempelvis Haveaffald - men forekommer på forskellige tidspunkter. Hvis såddane forkommer, så ville kun den sidste af disse blive registreret. Denne version løser dette problem, ved at tilføje et unikt id til navnet. Men ved at gøre dette, så bryder det med tidligere versioner, som kun genererede et unikt id baseret på type. Så når man har opdateret til denne version, er det nødvendigt at:
-  * Slette integration, fra *Integrations* siden og derefter tilføje den igen.
-  * Rette på de sider hvor man viser sensorerne da de nu, for de flestes vedkommende, har fået nye navne
-  * Rette i eventuelle automatiseringer, som anvender disse sensorer, af samme årsag som ovenfor.
+    Now pick the right ID from the last list of houses.
 
-  Beklager dette, men det er den eneste måde at sikre at alle data vises for alle.
-  Fixer issue #7
-* `FIXED`: Tilføjet **iot_class** til `manifest.json`, som krævet af Home Assistant fra version 2021.5
+  Or if you can't get this to work, send me your address and I will find it for you 😀
 
-## Version 0.1.12-Beta
 
-* `FIXED`: BREAKING CHANGE Det viser sig at i nogle kommuner vil der forekomme afhentninger der hedder det samme - eksempelvis Haveaffald - men forekommer på forskellige tidspunkter. Hvis såddane forkommer, så ville kun den sidste af disse blive registreret. Denne version løser dette problem, ved at tilføje et unikt id til navnet. Men ved at gøre dette, så bryder det med tidligere versioner, som kun genererede et unikt id baseret på type. Så når man har opdateret til denne version, er det nødvendigt at:
-  * Slette integration, fra *Integrations* siden og derefter tilføje den igen.
-  * Rette på de sider hvor man viser sensorerne da de nu, for de flestes vedkommende, har fået nye navne
-  * Rette i eventuelle automatiseringer, som anvender disse sensorer, af samme årsag som ovenfor.
+  ## Version 1.0.0
 
-  Beklager dette, men det er den eneste måde at sikre at alle data vises for alle.
+  - `ADDED`: For each Bin there will now be a binary_sensor called `binary_sensor.BIN_NAME_valid`. This sensor will show if data for this specific bin is valid. I use it personally with the conditional card, to only show a card if the data is valid.
+  - `CHANGED`: I have now rewritten some of the function to try and create more automatic recovery, should the sensor not get data on start on after an update. It will keep trying for a while, but if it takes too long it will give up, and not try again before the next timed update (Which per default is 6 hours). I did this a while ago and I do believe this introduces a **Breaking Change** as the sensors will get new names. (I honestly can't remember if this was the case) If this happens, just delete the Integration and re-add it, and then update you cards and automations with the new names. Sorry for any inconvinience.
+
+  ## Version 0.1.16
+
+  - `FIXED`: Ensuring all Unit of Measurrement are always the same (dage). This ensures that the sensors can be used with Helpers like the Min/Max helper.
+  - `ADDED`: Added new sensor called `sensor.renoweb_days_until_next_pickup`, which shows the number of days until the next pick-up of any of the containers.
+
+  ## Version 0.1.15
+
+  - `FIXED`: Fixing deprecated `async_get_registry` that might start showing up in HA 2022.6
+
+  ## Version 0.1.14
+
+  * `FIXED`: Fixes issue #10, with a deprecation warning about `device_state_attributes`.
+
+  ## Version 0.1.13
+
+  * `FIXED`: **BREAKING CHANGE** Det viser sig at i nogle kommuner vil der forekomme afhentninger der hedder det samme - eksempelvis Haveaffald - men forekommer på forskellige tidspunkter. Hvis såddane forkommer, så ville kun den sidste af disse blive registreret. Denne version løser dette problem, ved at tilføje et unikt id til navnet. Men ved at gøre dette, så bryder det med tidligere versioner, som kun genererede et unikt id baseret på type. Så når man har opdateret til denne version, er det nødvendigt at:
+    * Slette integration, fra *Integrations* siden og derefter tilføje den igen.
+    * Rette på de sider hvor man viser sensorerne da de nu, for de flestes vedkommende, har fået nye navne
+    * Rette i eventuelle automatiseringer, som anvender disse sensorer, af samme årsag som ovenfor.
+
+    Beklager dette, men det er den eneste måde at sikre at alle data vises for alle.
+    Fixer issue #7
+  * `FIXED`: Tilføjet **iot_class** til `manifest.json`, som krævet af Home Assistant fra version 2021.5
+
+  ## Version 0.1.12-Beta
+
+  * `FIXED`: BREAKING CHANGE Det viser sig at i nogle kommuner vil der forekomme afhentninger der hedder det samme - eksempelvis Haveaffald - men forekommer på forskellige tidspunkter. Hvis såddane forkommer, så ville kun den sidste af disse blive registreret. Denne version løser dette problem, ved at tilføje et unikt id til navnet. Men ved at gøre dette, så bryder det med tidligere versioner, som kun genererede et unikt id baseret på type. Så når man har opdateret til denne version, er det nødvendigt at:
+    * Slette integration, fra *Integrations* siden og derefter tilføje den igen.
+    * Rette på de sider hvor man viser sensorerne da de nu, for de flestes vedkommende, har fået nye navne
+    * Rette i eventuelle automatiseringer, som anvender disse sensorer, af samme årsag som ovenfor.
+
+    Beklager dette, men det er den eneste måde at sikre at alle data vises for alle.
+</details>
