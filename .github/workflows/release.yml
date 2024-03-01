@@ -33,3 +33,14 @@ jobs:
         uses: softprops/action-gh-release@v0.1.15
         with:
           files: ${{ github.workspace }}/custom_components/renoweb/renoweb.zip
+
+      - name: "ZIP the Entity Picture Images"
+        shell: "bash"
+        run: |
+          cd "${{ github.workspace }}/images/renoweb"
+          zip renoweb_images.zip -r ./
+
+      - name: "Upload the images ZIP file to the release"
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: ${{ github.workspace }}/images/renoweb/renoweb_images.zip

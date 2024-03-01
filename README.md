@@ -56,7 +56,7 @@ translation (Directory with all files)
 ## PRE-WORK
 
 This integration uses the `entity_picture` attribute, which means you can get nice looking Pictograms instead of Icons on your dashboard. If you want to use this feature, do the following:
-* download this [zip file](https://github.com/briis/renoweb/blob/main/images/renoweb.zip) and unzip the content. You should see a folder called `renoweb` with a bunch of `.svg` in it.
+* download the file ``renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. You should see a folder called `renoweb` with a bunch of `.svg` in it.
 * Open a file share to the `config` share on your Home Assistant entity, and go to the `www` directory. If this directory does not exist, just create it.
 * Now copy the folder `renoweb` from the Zip file to the `www` directory and that is it. This is where this integration will look for the Entity Pictures.
 
@@ -66,7 +66,7 @@ In order to add this Integration to Home Assistant, go to *Settings* and *Integr
 
 Now click the **+** button in the lower right corner, and then search for *Renoweb*. That should bring up the below screen:
 
-![](https://github.com/briis/renoweb/blob/main/config_flow.png)
+![](https://github.com/briis/renoweb/blob/main/images/documentation/config_flow.png)
 
 Now fill out the form and click the *SEND* button. The Integration should now find all data for your address and add the available sensors to Home Assistant.
 
