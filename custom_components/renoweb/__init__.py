@@ -11,6 +11,7 @@ from pyrenoweb import (
     PickupEvents,
     RenowWebNotSupportedError,
     RenowWebNotValidAddressError,
+    RenowWebNoConnection,
 )
 
 from homeassistant.config_entries import ConfigEntry
@@ -119,6 +120,9 @@ class RenoWebData:
         except RenowWebNotValidAddressError as err:
             _LOGGER.debug(err)
             return False
+        except RenowWebNoConnection as notreadyerror:
+            _LOGGER.debug(notreadyerror)
+            raise ConfigEntryNotReady from notreadyerror
         except Exception as notreadyerror:
             _LOGGER.debug(notreadyerror)
             raise ConfigEntryNotReady from notreadyerror

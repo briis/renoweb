@@ -16,6 +16,7 @@ from pyrenoweb import (
     RenoWebAddressInfo,
     RenowWebNotSupportedError,
     RenowWebNotValidAddressError,
+    RenowWebNoConnection,
 )
 
 from .const import (
@@ -59,6 +60,9 @@ class RenowebFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return await self._show_setup_form(errors)
         except RenowWebNotValidAddressError:
             errors["base"] = "location_not_found"
+            return await self._show_setup_form(errors)
+        except RenowWebNoConnection:
+            errors["base"] = "connection_error"
             return await self._show_setup_form(errors)
 
         await self.async_set_unique_id(address_info.address_id)

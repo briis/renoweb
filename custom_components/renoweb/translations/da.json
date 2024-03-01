@@ -5,7 +5,7 @@
             "request_error": "Fejl ved hentning af data fra serveren.",
             "location_not_found": "Den angivne adresse blev ikke fundet.",
             "municipality_not_supported": "Kommunen er ikke understøttet i denne Integration",
-            "connection_error": "Kunne ikke forbinde til RenoWeb."
+            "connection_error": "Renoweb svarer ikke. Prøv igen senere."
         },
         "step": {
             "user": {
@@ -15,8 +15,8 @@
                     "house_number": "Hus nummer",
                     "update_interval": "Opdaterings interval (timer)"
                 },
-                "description": "Hent data fra RenoWeb.",
-                "title": "RenoWeb Affaldsopsamling"
+                "description": "Hent data fra Renoweb.",
+                "title": "Renoweb Affaldsopsamling"
             }
         }
     },
