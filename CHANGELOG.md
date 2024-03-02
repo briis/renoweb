@@ -3,7 +3,7 @@
 
   ## Version 2.0.0-Beta-2
 
-  **Date**: `NOT Released Yet`
+  **Date**: `2024-03-03`
 
   ### Changes
 
@@ -55,7 +55,7 @@ I have now been through all Municipalities and checked if they work with this In
 * Added new garbage type `tekstil` which holds *Tekstilaffald*
 * Added new garbage type `glasplast` which holds *Glas, Plast & Madkartoner*
 * Added new garbage type `plastmetalpapir` which holds *Plast, Metal & Papir*
-* Fixed bug when Garbage Type could be in more than pickup type. Happens when partial strings are the same.
+* Fixed bug when Type String could be in more than pickup type. Happens when partial strings are the same.
 
   ## Version 2.0.0-Beta-1
 
