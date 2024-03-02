@@ -28,22 +28,12 @@ Platform | Description
 `calendar` | An entry will be made in to a local Home Assistant `calendar`. There will be a full-day event every time there is a pick-up, describing what is collected.
 
 
-## MUNICIPALTIES NOT SUPPORTED
-Unfortunately not all Municipalities use the API I use here, and therefore they are NOT supported, and CANNOT be added to the list.
-If your municipality is on the below and the V1.x worked for you, just don't upgrade to this version, and keep using the previous one.
+## NOT ALL MUNICIPALTIES ARE SUPPORTED
+Unfortunately not all Municipalities use the API I use here, and therefore they are NOT supported, and CANNOT be added to the list. I have been through all Municipalities and I found 47 of them to work with this API. There are a few more who seem to have access to the API, but they have decided on a very different implementation.
 
-As of writing this, I have found the following Municipalities to NOT work:
-
-* Ballerup
-* Billund
-* Bornholm
-* Fåborg-Midtfyn
-* København
-* Århus
+Go to the [Municipality List](#MUNICIPALITIES) to see if your Municipality will work with this integration
 
 **PLEASE RAISE AN ISSUE IF YOU CAN SELECT YOUR MUNICIPALITY BUT THE ADDRESS DOES NOT WORK**
-
-I have not testet all municipalities that are on the list, and I cannot guarantee that all will work. If you find that your Municipality and address does not work, please create an issue here on Github. I can then investigate if it is correctable, or I need to add the Municpality to the above list.
 
 The same applies if you can get data, but are missing one or more items that should have been on the Pick-Up list.
 
@@ -80,7 +70,7 @@ Here is the suggested *"Upgrade"* Procedure:
 ## PRE-WORK
 
 This integration uses the `entity_picture` attribute, which means you can get nice looking Pictograms instead of Icons on your dashboard. If you want to use this feature, do the following:
-* download the file `renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. (Find the **Assets** link in the bottom of the release and click it to unfold) You should see a folder called `renoweb_images` with a bunch of `.svg` files in it.
+* Download the file `renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. (Find the **Assets** link in the bottom of the release and click it to unfold) You should see a file called `renoweb_images` with a bunch of `.svg` files in it.
 * Open a file share to the `config` share on your Home Assistant entity, and go to the `www` directory. If this directory does not exist, just create it.
 * Now create a folder called `renoweb` in the `www` directory and copy all the `.svg` files to this directory. This is where this integration will look for the Entity Pictures.
 
@@ -129,7 +119,63 @@ To add Renoweb to your installation, do the following:
 You can configure more than 1 instance of the Integration by using a different Address.
 
 
+## MUNICIPALITIES
 
+Here is the list of currently supported Municipalities
+
+    - Aabenraa
+    - Aalborg
+    - Albertslund
+    - Allerød
+    - Brøndby
+    - Brønderslev
+    - Dragør
+    - Egedal
+    - Esbjerg
+    - Faxe
+    - Fredensborg
+    - Frederiksberg
+    - Frederikssund
+    - Furesø
+    - Gentofte
+    - Gladsaxe
+    - Glostrup
+    - Greve
+    - Gribskov
+    - Halsnæs
+    - Hedensted
+    - Helsingør
+    - Herlev
+    - Hillerød
+    - Hjørring
+    - Horsens
+    - Hvidovre
+    - Høje-Taastrup
+    - Hørsholm
+    - Jammerbugt
+    - Kerteminde
+    - Køge
+    - Lyngby-Taarbæk
+    - Mariagerfjord
+    - Næstved
+    - Odsherred
+    - Randers
+    - Rebild
+    - Ringkøbing-Skjern
+    - Ringsted
+    - Roskilde
+    - Rødovre
+    - Samsø
+    - Slagelse
+    - Solrød
+    - Sorø
+    - Stevns
+    - Svendborg
+    - Sønderborg
+    - Tårnby
+    - Varde
+    - Vejen
+    - Vordingborg
 
 ***
 
