@@ -11,6 +11,16 @@
 
 I have now been through all Municipalities and checked if they work with this Integration. There are 47 Munipalities that will work with this, and if you don't see your municipalitiy in the Dropdown List, then it will not work.
 
+As there are new sensors added you will also have to redoanload the `renoweb_images.zip` file and copy the content to your `www/renoweb` folder again.
+
+* Added new function to support Municipalities that only supply weekdays. (Albertslund, Furesø).
+* Added new garbage type `plastmadkarton` which holds *Plast & Mad-Drikkekartoner*
+* Added new garbage type `plastmetalmadmdk` which holds *Plast, Metal, Mad & Drikkekartoner*
+* Added new garbage type `pappapir` which holds *Pap & Papir*
+* Added new garbage type `tekstil` which holds *Tekstilaffald*
+* Added new garbage type `glasplast` which holds *Glas, Plast & Madkartoner*
+* Added new garbage type `plastmetalpapir` which holds *Plast, Metal & Papir*
+* Fixed bug when Type String could be in more than pickup type. Happens when partial strings are the same.
 * Removed the following Municipalities as they are not supported:
   * Balleup
   * Billund
@@ -48,14 +58,6 @@ I have now been through all Municipalities and checked if they work with this In
   * Tønder - They use the API in a Non-Standard way. Still under investigation if I can retrieve the data
   * Vallensbæk
 
-* Added new function to support Municipalities that only supply weekdays. (Albertslund, Furesø).
-* Added new garbage type `plastmadkarton` which holds *Plast & Mad-Drikkekartoner*
-* Added new garbage type `plastmetalmadmdk` which holds *Plast, Metal, Mad & Drikkekartoner*
-* Added new garbage type `pappapir` which holds *Pap & Papir*
-* Added new garbage type `tekstil` which holds *Tekstilaffald*
-* Added new garbage type `glasplast` which holds *Glas, Plast & Madkartoner*
-* Added new garbage type `plastmetalpapir` which holds *Plast, Metal & Papir*
-* Fixed bug when Type String could be in more than pickup type. Happens when partial strings are the same.
 
   ## Version 2.0.0-Beta-1
 
