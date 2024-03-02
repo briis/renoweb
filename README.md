@@ -30,10 +30,13 @@ Platform | Description
 
 ## MUNICIPALTIES NOT SUPPORTED
 Unfortunately not all Municipalities use the API I use here, and therefore they are NOT supported, and CANNOT be added to the list.
+If your municipality is on the below and the V1.x worked for you, just don't upgrade to this version, and keep using the previous one.
 
 As of writing this, I have found the following Municipalities to NOT work:
 
-* Albertslund - They do use the API, but they don't put dates in, just a textual description of when next pick-up is.
+* Ballerup
+* Billund
+* Bornholm
 * Fåborg-Midtfyn
 * København
 * Århus

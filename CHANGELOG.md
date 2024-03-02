@@ -1,5 +1,29 @@
 # Changelog for Renoweb Home Assistant Integration
 
+
+  ## Version 2.0.0-Beta-2
+
+  **Date**: `NOT Released Yet`
+
+  ### Changes
+
+  **Please see the release notes for Beta1 before installing**
+
+* Removed the following Municipalities as they are not supported:
+  * Balleup
+  * Billund
+  * Fanø
+  * Favrskov
+  * Fredericia
+  * Frederikshavn
+* Added new function to support Municipalities that only supply weekdays. (Albertslund, Furesø).
+* Added new garbage type `plastmetalmadmdk` which holds *Plast, Metal, Mad & Drikkekartoner*
+* Added new garbage type `pappapir` which holds *Pap & Papir*
+* Added new garbage type `tekstil` which holds *Tekstilaffald*
+* Added new garbage type `glasplast` which holds *Glas, Plast & Madkartoner*
+* Fixed bug when Garbage Type could be in more than pickup type. Happens when partial strings are the same.
+
+
   ## Version 2.0.0-Beta-1
 
   **Date**: `2024-03-02`
