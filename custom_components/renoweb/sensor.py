@@ -144,6 +144,11 @@ SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
         native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
+        key="plastmadkarton",
+        name="Plast & Mad-Drikkekartoner",
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
         key="pappapir",
         name="Pap & Papir",
         native_unit_of_measurement="dage",

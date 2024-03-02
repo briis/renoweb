@@ -49,6 +49,7 @@ I have now been through all Municipalities and checked if they work with this In
   * Vallensbæk
 
 * Added new function to support Municipalities that only supply weekdays. (Albertslund, Furesø).
+* Added new garbage type `plastmadkarton` which holds *Plast & Mad-Drikkekartoner*
 * Added new garbage type `plastmetalmadmdk` which holds *Plast, Metal, Mad & Drikkekartoner*
 * Added new garbage type `pappapir` which holds *Pap & Papir*
 * Added new garbage type `tekstil` which holds *Tekstilaffald*
