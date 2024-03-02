@@ -139,6 +139,31 @@ SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
         native_unit_of_measurement="dage",
     ),
     RenoWebSensorEntityDescription(
+        key="plastmetalmadmdk",
+        name="Plast, Metal, Mad & Drikkekartoner",
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
+        key="pappapir",
+        name="Pap & Papir",
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
+        key="tekstil",
+        name="Tekstiler",
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
+        key="glasplast",
+        name="Glas & Plast",
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
+        key="plastmetalpapir",
+        name="Plast, Metal & Papir",
+        native_unit_of_measurement="dage",
+    ),
+    RenoWebSensorEntityDescription(
         key="next_pickup",
         name="Næste afhentning",
         native_unit_of_measurement="dage",
