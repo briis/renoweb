@@ -10,6 +10,16 @@
 
 The renoweb integration adds support for retreiving Garbage Collection data from Municipalities around Denmark. The integration uses the same lookup API's as the Municipalities do, so if your Municipality uses Renoweb as their data API, there is very good chance that this integration will work for you.
 
+The biggest issue is that there is NO standard for the way municipalities mix the content of containers. Some have glas & metal in one container, others have glas and paper in one container, etc and also even though they do mix the same content in a container, they do not name it the same. In order to have some structure I need them grouped together and this is a bit of a challenge with all these different types. If a new pickup-type is found the system will log a warning, which you can put in an issue and I will add it to the list. Please enable logging for the wrapper module in Home assistant by adding this code to your `configuration.yaml`:
+
+```yaml
+logger:
+  default: warning
+  logs:
+    custom_components.renoweb: error
+    pyrenoweb: error
+```
+
 #### This integration will set up the following platforms.
 
 Platform | Description
@@ -22,6 +32,8 @@ Platform | Description
 Unfortunately not all Municipalities use the API I use here, and therefore they are NOT supported, and CANNOT be added to the list.
 
 As of writing this, I have found the following Municipalities to NOT work:
+
+* Albertslund - They do use the API, but they don't put dates in, just a textual description on when next pick-up is.
 * Fåborg-Midtfyn
 * København
 * Århus
