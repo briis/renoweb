@@ -6,7 +6,7 @@
 
   ### Changes
 
-  This is a complete rewrite of the V1.x Integration. There is no code left from the previous version, and as a result of that, there is NO DIRECT UPGRADE from version 1.x to V2.0.
+  **BREAKING CHANGE**: This is a complete rewrite of the V1.x Integration. There is no code left from the previous version, and as a result of that, there is NO DIRECT UPGRADE from version 1.x to V2.0.
 
   I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements.
 
