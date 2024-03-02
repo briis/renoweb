@@ -10,7 +10,7 @@
 
 The renoweb integration adds support for retreiving Garbage Collection data from Municipalities around Denmark. The integration uses the same lookup API's as the Municipalities do, so if your Municipality uses Renoweb as their data API, there is very good chance that this integration will work for you.
 
-The biggest issue is that there is NO standard for the way municipalities mix the content of containers. Some have glas & metal in one container, others have glas and paper in one container, etc and also even though they do mix the same content in a container, they do not name it the same. In order to have some structure I need them grouped together and this is a bit of a challenge with all these different types. If a new pickup-type is found the system will log a warning, which you can put in an issue and I will add it to the list. Please enable logging for the wrapper module in Home assistant by adding this code to your `configuration.yaml`:
+The biggest issue is that there is NO standard for the way municipalities mix the content of containers. Some have glas & metal in one container, others have glas and paper in one container, etc and also even though they do mix the same content in a container, they do not name it the same. In order to have some structure I need them grouped together and this is a bit of a challenge with all these different types. If a new pickup-type is found, the system will log a warning, which you can put in an issue and I will add it to the list. Please enable logging for the wrapper module in Home assistant to get this warning in Home Assistant, by adding this code to your `configuration.yaml`:
 
 ```yaml
 logger:
@@ -20,7 +20,7 @@ logger:
     pyrenoweb: error
 ```
 
-#### This integration will set up the following platforms.
+### This integration will set up the following platforms.
 
 Platform | Description
 -- | --
@@ -33,14 +33,14 @@ Unfortunately not all Municipalities use the API I use here, and therefore they 
 
 As of writing this, I have found the following Municipalities to NOT work:
 
-* Albertslund - They do use the API, but they don't put dates in, just a textual description on when next pick-up is.
+* Albertslund - They do use the API, but they don't put dates in, just a textual description of when next pick-up is.
 * Fåborg-Midtfyn
 * København
 * Århus
 
 **PLEASE RAISE AN ISSUE IF YOU CAN SELECT YOUR MUNICIPALITY BUT THE ADDRESS DOES NOT WORK**
 
-I have not testet all municipalities that are still on the list, and I cannot guarantee that all will work. If you find that your Municipality and address does not work, please create an issue here on Github. I can then investigate if it is correctable, or I need to add the Municpality to the above list.
+I have not testet all municipalities that are on the list, and I cannot guarantee that all will work. If you find that your Municipality and address does not work, please create an issue here on Github. I can then investigate if it is correctable, or I need to add the Municpality to the above list.
 
 The same applies if you can get data, but are missing one or more items that should have been on the Pick-Up list.
 
@@ -50,9 +50,9 @@ A big thank you to @thomaspalmdk for finding the new API, and help test this new
 
 ## UPGRADING FROM VERSION 1.X
 
-As of version 2.0, I am using a completely new API, and I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements. All this means that there is NO directupgrade path from V1.x to this Version and all your sensors will get new names and new Unique ID's, which again means you will have to change automations, scripts and dashboard after installing this version.
+As stated above, as of version 2.0, I am using a completely new API, and I have also used the opportunity to ensure this Integration delivers on the latest Home Assistant Requirements. All this means that there is NO direct upgrade path from V1.x to this Version and all your sensors will get new names and new Unique ID's, which again means you will have to change automations, scripts and dashboard after installing this version.
 
-If you never installed Renoweb before go directly the Installation section.
+If you never installed Renoweb before go directly the [Installation section](#INSTALLATION).
 
 Here is the suggested *"Upgrade"* Procedure:
 
@@ -77,7 +77,7 @@ Here is the suggested *"Upgrade"* Procedure:
 ## PRE-WORK
 
 This integration uses the `entity_picture` attribute, which means you can get nice looking Pictograms instead of Icons on your dashboard. If you want to use this feature, do the following:
-* download the file `renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. You should see a folder called `renoweb` with a bunch of `.svg` in it.
+* download the file `renoweb_images.zip` from the [latest relase](https://github.com/briis/renoweb/releases) and unzip the content. You should see a folder called `renoweb` with a bunch of `.svg` files in it.
 * Open a file share to the `config` share on your Home Assistant entity, and go to the `www` directory. If this directory does not exist, just create it.
 * Now copy the folder `renoweb` from the Zip file to the `www` directory and that is it. This is where this integration will look for the Entity Pictures.
 
@@ -111,14 +111,14 @@ To add Renoweb to your installation, do the following:
 
 - Go to Configuration and Integrations
 - Click the + ADD INTEGRATION button in the lower right corner.
-- Search for *Renoweb** and click the integration.
+- Search for *Renoweb* and click the integration.
 - When loaded, there will be a configuration box, where you must enter:
 
   | Parameter | Required | Default Value | Description |
   | --------- | -------- | ------------- | ----------- |
   | `Municipality` | Yes | None | Select your Municipality from the Dropdown list. You can press the first letter of your municipality to quickly scroll down. |
   | `Road name` | Yes | None | Type the name of the road you want to get collection data for. Without house number. |
-  | `House Number` | Yes | None | The house number of the address. Also accepts letters. |
+  | `House Number` | Yes | None | The house number of the address. Also accepts letters. If you have a house number like 2A or similar, and it does not work, try putting a space between the number and the letter, like 2 A |
 
 - Click on SUBMIT to save your data. If all goes well you should now have a two new entities under the Renoweb integration
 
