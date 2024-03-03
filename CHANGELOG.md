@@ -9,9 +9,9 @@
 
   **Please see the release notes for Beta1 before installing**
 
-I have now been through all Municipalities and checked if they work with this Integration. There are 47 Munipalities that will work with this, and if you don't see your municipalitiy in the Dropdown List, then it will not work.
+I have now been through all Municipalities and checked if they work with this Integration. There are 47 Munipalities that will work , and if you don't see your municipality in the Dropdown List, then it will not work.
 
-As there are new sensors added you will also have to redoanload the `renoweb_images.zip` file and copy the content to your `www/renoweb` folder again.
+As there are new sensors added you will also have to redownload the `renoweb_images.zip` file from this release, and copy the content to your `www/renoweb` folder again.
 
 * Added new function to support Municipalities that only supply weekdays. (Albertslund, Furesø).
 * Added new garbage type `plastmadkarton` which holds *Plast & Mad-Drikkekartoner*
