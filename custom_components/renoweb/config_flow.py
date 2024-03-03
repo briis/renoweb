@@ -1,103 +1,81 @@
 """Config Flow for Renoweb Integration."""
+from __future__ import annotations
 
 import logging
 import voluptuous as vol
-
-from pyrenoweb import (
-    RenoWeb,
-    RequestError,
-    ResultError,
-    InvalidApiKey,
-    MunicipalityError,
-)
+from typing import Any
 from homeassistant import config_entries
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.helpers.selector import selector
+
+from pyrenoweb import (
+    GarbageCollection,
+    MUNICIPALITIES_ARRAY,
+    RenoWebAddressInfo,
+    RenowWebNotSupportedError,
+    RenowWebNotValidAddressError,
+    RenowWebNoConnection,
+)
 
 from .const import (
-    API_KEY_MUNICIPALITIES,
-    API_KEY,
-    CONF_ADDRESS,
     CONF_ADDRESS_ID,
     CONF_HOUSE_NUMBER,
     CONF_MUNICIPALITY,
-    CONF_MUNICIPALITY_ID,
     CONF_ROAD_NAME,
     CONF_UPDATE_INTERVAL,
-    CONF_ZIPCODE,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-
-class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """RenoWeb configuration flow."""
+class RenowebFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config Flow for RenoWeb."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
-        """Get the options flow for this handler."""
-        return OptionsFlowHandler(config_entry)
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> config_entries.OptionsFlow:
+        """Get the options flow for RenoWeb."""
+        return RenoWebOptionsFlowHandler(config_entry)
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Handle a flow initialized by the user."""
-        errors = {}
 
         if user_input is None:
-            return await self._show_setup_form()
+            return await self._show_setup_form(user_input)
 
+        errors = {}
         session = async_create_clientsession(self.hass)
-        renoweb = RenoWeb(API_KEY_MUNICIPALITIES, API_KEY, session)
 
         try:
-            unique_data = await renoweb.find_renoweb_ids(
-                user_input[CONF_MUNICIPALITY],
-                user_input[CONF_ZIPCODE],
-                user_input[CONF_ROAD_NAME],
-                user_input[CONF_HOUSE_NUMBER],
-            )
-        except MunicipalityError:
+            renoweb = GarbageCollection(municipality=user_input[CONF_MUNICIPALITY], session=session)
+            await renoweb.async_init()
+            address_info: RenoWebAddressInfo = await renoweb.get_address_id(street=user_input[CONF_ROAD_NAME], house_number=user_input[CONF_HOUSE_NUMBER])
+        except RenowWebNotSupportedError:
             errors["base"] = "municipality_not_supported"
             return await self._show_setup_form(errors)
-        except ResultError:
+        except RenowWebNotValidAddressError:
             errors["base"] = "location_not_found"
             return await self._show_setup_form(errors)
-        except InvalidApiKey:
+        except RenowWebNoConnection:
             errors["base"] = "connection_error"
             return await self._show_setup_form(errors)
-        except RequestError:
-            errors["base"] = "request_error"
-            return await self._show_setup_form(errors)
 
-        address = unique_data.get("address")
-        address_id = unique_data.get("address_id")
-        municipality_id = unique_data.get("municipality_id")
-        if user_input[CONF_MUNICIPALITY].isnumeric():
-            municipality_name = unique_data.get("municipality")
-        else:
-            municipality_name = user_input[CONF_MUNICIPALITY]
-        entries = self._async_current_entries()
-        for entry in entries:
-            if entry.data[CONF_ADDRESS_ID] == address_id:
-                return self.async_abort(reason="name_exists")
+        await self.async_set_unique_id(address_info.address_id)
+        self._abort_if_unique_id_configured
 
         return self.async_create_entry(
-            title=address,
+            title=f"{address_info.vejnavn} {address_info.husnr}",
             data={
-                CONF_ADDRESS: address,
-                CONF_ADDRESS_ID: address_id,
-                CONF_MUNICIPALITY_ID: municipality_id,
-                CONF_MUNICIPALITY: municipality_name,
-                CONF_ZIPCODE: user_input.get(CONF_ZIPCODE),
-                CONF_ROAD_NAME: user_input.get(CONF_ROAD_NAME),
-                CONF_HOUSE_NUMBER: user_input.get(CONF_HOUSE_NUMBER),
-                CONF_UPDATE_INTERVAL: user_input.get(CONF_UPDATE_INTERVAL),
-            },
+                CONF_MUNICIPALITY: address_info.kommunenavn,
+                CONF_ROAD_NAME: address_info.vejnavn,
+                CONF_HOUSE_NUMBER: address_info.husnr,
+                CONF_ADDRESS_ID: address_info.address_id,
+            }
         )
 
     async def _show_setup_form(self, errors=None):
@@ -106,30 +84,26 @@ class RenoWebConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_MUNICIPALITY): str,
-                    vol.Required(CONF_ZIPCODE): str,
+                    vol.Required(CONF_MUNICIPALITY):selector({"select": {"options": MUNICIPALITIES_ARRAY}}),
                     vol.Required(CONF_ROAD_NAME): str,
                     vol.Required(CONF_HOUSE_NUMBER): str,
-                    vol.Optional(
-                        CONF_UPDATE_INTERVAL, default=DEFAULT_SCAN_INTERVAL
-                    ): vol.All(vol.Coerce(int), vol.Range(min=3, max=24)),
                 }
             ),
             errors=errors or {},
         )
 
 
-class OptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle options."""
+class RenoWebOptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle a RenoWeb options flow."""
 
-    def __init__(self, config_entry):
-        """Initialize options flow."""
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize the options flow."""
         self.config_entry = config_entry
 
-    async def async_step_init(self, user_input=None):
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Manage the options."""
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            return self.async_create_entry(title="Options for Renoweb", data=user_input)
 
         return self.async_show_form(
             step_id="init",
@@ -144,3 +118,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 }
             ),
         )
+
+
+
