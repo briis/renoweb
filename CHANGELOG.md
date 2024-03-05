@@ -11,5 +11,5 @@ NOTHING changed, the only purpose of this release, is to push the message that t
 
 So don't press download here, instead head over to the new Integration and follow the instructions to upgrade from Renoweb.
 
-## Version 1.0.1
+
 
