@@ -1,6 +1,7 @@
 """Support for the RenoWeb Garbage Collection Service."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
 
@@ -17,7 +18,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client
 import homeassistant.helpers.device_registry as dr
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
     API_KEY,
@@ -57,6 +58,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     _LOGGER.debug("Connected to RenoWeb Platform")
 
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = renoweb
+
+    coordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name=DOMAIN,
+        update_method=renoweb.get_pickup_data,
+        update_interval=timedelta(
+            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        ),
+    )
+
     try:
         await renoweb.get_pickup_data()
     except InvalidApiKey:
@@ -71,35 +84,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("Error occured: %s", err)
         raise ConfigEntryNotReady from err
 
-    if entry.unique_id is None:
-        hass.config_entries.async_update_entry(
-            entry, unique_id=entry.data.get(CONF_ADDRESS_ID)
-        )
-
-    async def async_update_data():
-        """Obtain the latest data from RenoWeb."""
-        try:
-            data = await renoweb.get_pickup_data()
-            return data
-        except (RequestError, ResultError) as err:
-            _LOGGER.error("Error occured: %s", err)
-            raise UpdateFailed(f"Error while retreiving data: {err}") from err
-
-    coordinator = DataUpdateCoordinator(
-        hass,
-        _LOGGER,
-        name=DOMAIN,
-        update_method=async_update_data,
-        update_interval=timedelta(
-            hours=entry.options.get(CONF_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL)
-        ),
-    )
     # Fetch initial data so we have data when entities subscribe
     await coordinator.async_refresh()
-    if not coordinator.last_update_success:
-        raise ConfigEntryNotReady
-
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
+    hass.data[DOMAIN][entry.entry_id] = {
         "coordinator": coordinator,
         "renoweb": renoweb,
         "municipality_id": entry.data.get(CONF_MUNICIPALITY_ID),
@@ -109,9 +96,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await _async_get_or_create_renoweb_device_in_registry(
         hass, entry, entry.data.get(CONF_ADDRESS_ID)
     )
-    await hass.config_entries.async_forward_entry_setups(entry, INTEGRATION_PLATFORMS)
 
-    entry.async_on_unload(entry.add_update_listener(_async_options_updated))
+    for platform in INTEGRATION_PLATFORMS:
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(entry, platform)
+        )
+
+    if not entry.update_listeners:
+        entry.add_update_listener(async_update_options)
 
     return True
 
@@ -132,14 +124,23 @@ async def _async_get_or_create_renoweb_device_in_registry(
     )
 
 
-async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry):
+async def async_update_options(hass: HomeAssistant, entry: ConfigEntry):
     """Update options."""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload WeatherFlow entry."""
-    unload_ok = await hass.config_entries.async_unload_platforms(
-        entry, INTEGRATION_PLATFORMS
+    """Unload RenowWeb config entry."""
+    unload_ok = all(
+        await asyncio.gather(
+            *[
+                hass.config_entries.async_forward_entry_unload(entry, component)
+                for component in INTEGRATION_PLATFORMS
+            ]
+        )
     )
+
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+
     return unload_ok

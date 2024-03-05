@@ -1,285 +1,123 @@
-"""Support for Renoweb sensor data."""
+"""Sensors for the RenoWeb Garbage Collection Service."""
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 
-from dataclasses import dataclass
-from datetime import datetime as dt
-from types import MappingProxyType
-from typing import Any
-
-from homeassistant.components.sensor import (
-    SensorEntity,
-    SensorEntityDescription,
-)
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.util import datetime as dt
 from homeassistant.core import HomeAssistant
-from homeassistant.const import ATTR_DATE, ATTR_NAME, ATTR_ENTITY_PICTURE
-from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import StateType
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-)
 
-from . import RenoWebtDataUpdateCoordinator
 from .const import (
-    ATTR_DATE_LONG,
+    ATTR_DATA_VALID,
     ATTR_DESCRIPTION,
-    ATTR_DURATION,
-    ATTR_LAST_UPDATE,
-    CONF_ADDRESS_ID,
-    CONF_HOUSE_NUMBER,
-    CONF_ROAD_NAME,
-    DEFAULT_ATTRIBUTION,
-    DEFAULT_BRAND,
+    ATTR_FORMATTED_STATE_DK,
+    ATTR_ICON_COLOR,
+    ATTR_NEXT_PICKUP_TEXT,
+    ATTR_NEXT_PICKUP_DATE,
+    ATTR_REFRESH_TIME,
+    ATTR_SHORT_STATE_DK,
+    ATTR_SCHEDULE,
+    ATTR_STATE_TEXT,
     DOMAIN,
 )
-from pyrenoweb import ICON_LIST, PickupType
-
-@dataclass
-class RenoWebSensorEntityDescription(SensorEntityDescription):
-    """Describes RenoWeb sensor entity."""
-
-SENSOR_TYPES: tuple[RenoWebSensorEntityDescription, ...] = (
-    RenoWebSensorEntityDescription(
-        key="restaffaldmadaffald",
-        name="Rest- & madaffald",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="glas",
-        name="Glas",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="dagrenovation",
-        name="Dagrenovations",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="metalglas",
-        name="Metal & Glas",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="papirglas",
-        name="Papir, Pap & Glas",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="pappi",
-        name="Papir & Plast",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="farligtaffald",
-        name="Farligt affald",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="farligtaffaldmiljoboks",
-        name="Farligt affald & Miljøboks",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="flis",
-        name="Flis",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="genbrug",
-        name="Genbrug",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="jern",
-        name="Jern",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="papir",
-        name="Papir",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="papirmetal",
-        name="Papir & Metal",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="pap",
-        name="Pap",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="plastmetal",
-        name="Plast & Metal",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="storskrald",
-        name="Storskrald",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="storskraldogtekstilaffald",
-        name="Storskrald & Tekstilaffald",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="haveaffald",
-        name="Haveaffald",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="pappapirglasmetal",
-        name="Pap, Papir, Glas & Metal",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="plastmetalmadmdk",
-        name="Plast, Metal, Mad & Drikkekartoner",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="plastmadkarton",
-        name="Plast & Mad-Drikkekartoner",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="pappapir",
-        name="Pap & Papir",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="tekstil",
-        name="Tekstiler",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="glasplast",
-        name="Glas & Plast",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="plastmetalpapir",
-        name="Plast, Metal & Papir",
-        native_unit_of_measurement="dage",
-    ),
-    RenoWebSensorEntityDescription(
-        key="next_pickup",
-        name="Næste afhentning",
-        native_unit_of_measurement="dage",
-    ),
-)
+from .entity import RenoWebEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    """RenoWeb sensor platform."""
-    coordinator: RenoWebtDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    if coordinator.data.pickup_events == {}:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
+) -> None:
+    """Set up the RenoWeb sensor platform."""
+
+    coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
+    if not coordinator.data:
         return
 
+    renoweb = hass.data[DOMAIN][entry.entry_id]["renoweb"]
+    if not renoweb:
+        return
 
-    entities: list[RenoWebSensor[Any]] = [
-        RenoWebSensor(coordinator, description, config_entry)
-        for description in SENSOR_TYPES if coordinator.data.pickup_events.get(description.key) is not None
-    ]
+    municipality_id = hass.data[DOMAIN][entry.entry_id]["municipality_id"]
+    if not municipality_id:
+        return
 
-    async_add_entities(entities, False)
+    address_id = hass.data[DOMAIN][entry.entry_id]["address_id"]
+    if not address_id:
+        return
 
-class RenoWebSensor(CoordinatorEntity[DataUpdateCoordinator], SensorEntity):
-    """A RenoWeb sensor."""
-
-    entity_description: RenoWebSensorEntityDescription
-    _attr_attribution = DEFAULT_ATTRIBUTION
-    _attr_has_entity_name = True
-
-    def __init__(
-        self,
-        coordinator: RenoWebtDataUpdateCoordinator,
-        description: RenoWebSensorEntityDescription,
-        config: MappingProxyType[str, Any]
-    ) -> None:
-        """Initialize a RenoWeb sensor."""
-        super().__init__(coordinator)
-        self.entity_description = description
-        self._config = config
-        self._coordinator = coordinator
-        self._pickup_events: PickupType = coordinator.data.pickup_events.get(description.key) if coordinator.data.pickup_events else None
-
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._config.data[CONF_ADDRESS_ID])},
-            entry_type=DeviceEntryType.SERVICE,
-            manufacturer=DEFAULT_BRAND,
-            name=f"{DOMAIN.capitalize()} {self._config.data[CONF_ROAD_NAME]} {self._config.data[CONF_HOUSE_NUMBER]}",
-            configuration_url="https://github.com/briis/renoweb",
+    sensors = []
+    for sensor in coordinator.data:
+        sensors.append(
+            RenoWebSensor(coordinator, renoweb, sensor, municipality_id, address_id)
         )
-        self._attr_unique_id = f"{config.data[CONF_ADDRESS_ID]} {description.key}"
+        _LOGGER.debug("SENSOR ADDED: %s", sensor)
+    async_add_entities(sensors, True)
+
+    return True
+
+
+class RenoWebSensor(RenoWebEntity, SensorEntity):
+    """Implementation of a RenoWeb Sensor."""
+
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-arguments
+    # Eight is reasonable in this case.
+
+    def __init__(self, coordinator, renoweb, sensor, municipality_id, address_id):
+        """Initialize the sensor."""
+        super().__init__(coordinator, renoweb, sensor, municipality_id, address_id)
+
+        # _name = self._data.get("description").replace("-", " ")
+        # _name = _name.replace("_", " ")
+        self._attr_name = f"{DOMAIN.capitalize()} {self._data.get('name')}"
+        self._attr_native_unit_of_measurement = "dage"
+        self._attr_unique_id = (
+            f"{self.entity_object.replace(' ', '_')}_{self._address_id}"
+        )
 
     @property
-    def native_unit_of_measurement(self) -> str | None:
-        """Return unit of sensor."""
-
-        current_time = dt.today()
-        pickup_time: dt = self._pickup_events.date
-        if pickup_time:
-            if ((pickup_time - current_time).days + 1) == 1:
-                return "dag"
-
-        return super().native_unit_of_measurement
+    def native_value(self):
+        """Return the state of the sensor."""
+        return self._data.get("daysuntilpickup")
 
     @property
-    def native_value(self) -> StateType:
-        """Return state of the sensor."""
-
-        current_time = dt.today()
-        pickup_time: dt = self._pickup_events.date
-        if pickup_time:
-            return (pickup_time - current_time).days + 1
+    def icon(self):
+        """Icon to use in the frontend."""
+        return self._data.get("icon")
 
     @property
-    def icon(self) -> str | None:
-        """Return icon for sensor."""
-
-        return ICON_LIST.get(self.entity_description.key)
-
-    @property
-    def extra_state_attributes(self) -> None:
-        """Return non standard attributes."""
-
-        _date: dt = self._pickup_events.date
-        _current_date = dt.today()
-        _state = (_date - _current_date).days + 1
-        _day_number = _date.weekday()
-        _weekdays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
-        _weekdays_full = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"]
-        _day_name = _weekdays[_day_number]
-        _day_name_long = _weekdays_full[_day_number]
-        if _state == 0:
-            _day_text = "I dag"
-        elif _state == 1:
-            _day_text = "I morgen"
-        else:
-            _day_text = f"Om {_state} dage"
-
+    def extra_state_attributes(self):
+        """Return the state attributes of the device."""
+        local_dt = dt.now()
+        pickup_dt = datetime.fromtimestamp(
+            int(self._data.get("nextpickupdatetimestamp"))
+        )
+        day_number = pickup_dt.weekday()
+        day_list = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
+        day_name = day_list[day_number]
+        format_dt = pickup_dt.strftime(" d. %d/%m")
+        day_str = "dag" if self.state == 1 else "dage"
+        format_state = (
+            str(self.state) + " " + day_str + " (" + day_name + format_dt + ")"
+        )
+        short_state_dk = day_name + format_dt
+        # Rewrite Attributes if no pickup schedule is supplied
+        if self.state == -1:
+            format_state = "Ikke Planlagt"
+            short_state_dk = "Ikke Planlagt"
         return {
-            ATTR_DATE: _date.date() if _date else None,
-            ATTR_DATE_LONG: f"{_day_name_long} {_date.strftime("d. %d-%m-%Y") if _date else None}" ,
-            ATTR_DESCRIPTION: self._pickup_events.description,
-            ATTR_DURATION: _day_text,
-            ATTR_ENTITY_PICTURE: f"/local/renoweb/{self._pickup_events.entity_picture}?{str(_current_date.timestamp())}",
-            ATTR_LAST_UPDATE: self._pickup_events.last_updated,
-            ATTR_NAME: self._pickup_events.friendly_name,
+            **super().extra_state_attributes,
+            ATTR_DATA_VALID: self._data.get("data_valid"),
+            ATTR_DESCRIPTION: self._data.get("description"),
+            ATTR_ICON_COLOR: self._data.get("icon_color"),
+            ATTR_NEXT_PICKUP_TEXT: self._data.get("nextpickupdatetext"),
+            ATTR_NEXT_PICKUP_DATE: self._data.get("nextpickupdate"),
+            ATTR_REFRESH_TIME: local_dt.strftime("%d-%m-%Y %H:%M"),
+            ATTR_SCHEDULE: self._data.get("schedule"),
+            ATTR_FORMATTED_STATE_DK: format_state,
+            ATTR_SHORT_STATE_DK: short_state_dk,
+            ATTR_STATE_TEXT: self._data.get("state_text"),
         }
-
-    async def async_added_to_hass(self):
-        """When entity is added to hass."""
-        self.async_on_remove(
-            self._coordinator.async_add_listener(self.async_write_ha_state)
-        )
-
