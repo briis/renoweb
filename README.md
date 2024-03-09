@@ -9,6 +9,8 @@ But don't worry, a replacement is now Live, that even supports some of the Munic
 
 So DO NOT INSTALL this integration, instead go to [Affaldshåndtering DK](https://github.com/briis/affalddk) and follow the instructions to install and/or upgrade from Renoweb.
 
+If your municipality was supported in this Integration, but not in `Affaldshåndtering DK` then this is most likely due to the fact that Municipality is about to move to another provider than Renoweb. If this is the case for you, I recommend you just keep using this integration as long as it works.
+
 
 ## INTRODUCTION
 
